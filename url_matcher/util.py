@@ -1,4 +1,4 @@
-from functools import lru_cache, reduce
+from functools import lru_cache
 from urllib.parse import urlparse
 
 from tldextract import tldextract

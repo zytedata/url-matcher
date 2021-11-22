@@ -1,21 +1,19 @@
-import json
-from pathlib import Path
-
 import pytest
-
-from url_matcher import URLMatcher, Patterns
-from url_matcher.matcher import IncludePatternsWithoutDomainError
 from util import load_json_fixture
 
+from url_matcher import Patterns, URLMatcher
+from url_matcher.matcher import IncludePatternsWithoutDomainError
 
 PATTERNS_FIXTURE = load_json_fixture("patterns")
 CORNER_CASES_FIXTURE = load_json_fixture("patterns_corner_cases")
 RULES_FIXTURE = load_json_fixture("rules")
 
 
-@pytest.mark.parametrize("patterns,match,no_match",
-                         [(row["patterns"], row["match"], row["no_match"]) for row in PATTERNS_FIXTURE],
-                         ids=[row["description"] for row in PATTERNS_FIXTURE])
+@pytest.mark.parametrize(
+    "patterns,match,no_match",
+    [(row["patterns"], row["match"], row["no_match"]) for row in PATTERNS_FIXTURE],
+    ids=[row["description"] for row in PATTERNS_FIXTURE],
+)
 def test_matcher_single_rule(patterns, match, no_match):
     matcher = URLMatcher()
     matcher.add_or_update(23, Patterns(**patterns))
@@ -25,9 +23,11 @@ def test_matcher_single_rule(patterns, match, no_match):
         assert not matcher.match(url)
 
 
-@pytest.mark.parametrize("patterns,match,no_match",
-                         [(row["patterns"], row["match"], row["no_match"]) for row in CORNER_CASES_FIXTURE],
-                         ids=[row["description"] for row in CORNER_CASES_FIXTURE])
+@pytest.mark.parametrize(
+    "patterns,match,no_match",
+    [(row["patterns"], row["match"], row["no_match"]) for row in CORNER_CASES_FIXTURE],
+    ids=[row["description"] for row in CORNER_CASES_FIXTURE],
+)
 def test_matcher_single_rule_corner_cases(patterns, match, no_match):
     matcher = URLMatcher()
     matcher.add_or_update(23, Patterns(**patterns))
@@ -37,9 +37,11 @@ def test_matcher_single_rule_corner_cases(patterns, match, no_match):
         assert not matcher.match(url)
 
 
-@pytest.mark.parametrize("rules,cases",
-                         [(row["rules"], row["cases"]) for row in RULES_FIXTURE],
-                         ids=[row["description"] for row in RULES_FIXTURE])
+@pytest.mark.parametrize(
+    "rules,cases",
+    [(row["rules"], row["cases"]) for row in RULES_FIXTURE],
+    ids=[row["description"] for row in RULES_FIXTURE],
+)
 def test_matcher_rules(rules, cases):
     matcher = URLMatcher()
     for id, patterns in rules.items():
@@ -108,4 +110,3 @@ def test_matcher_add_remove_get():
     # Wrong patterns
     with pytest.raises(IncludePatternsWithoutDomainError):
         matcher.add_or_update(1, Patterns(["/no_domain_pattern"]))
-

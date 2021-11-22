@@ -1,0 +1,71 @@
+[
+  {
+    "description": "Universal matcher by using an empty include pattern",
+    "patterns": {
+      "include": [],
+      "exclude": ["/index.html|"]
+    },
+    "match": [
+      "https://books.toscrape.com/catalogue/join_902/index.html",
+      "https://books.toscrape.com/catalogue/arena_587/index.html"
+    ],
+    "no_match": [
+      "https://books.toscrape.com/index.html"
+    ]
+  },
+  {
+    "description": "Match products in books.toscrape.com",
+    "patterns": {
+      "include": [
+        "books.toscrape.com/catalogue/"
+      ],
+      "exclude": [
+        "/catalogue/category/"
+      ]
+    },
+    "match": [
+      "https://books.toscrape.com/catalogue/join_902/index.html",
+      "https://books.toscrape.com/catalogue/arena_587/index.html"
+    ],
+    "no_match": [
+      "https://books.toscrape.com/index.html",
+      "https://books.toscrape.com/catalogue/category/books/mystery_3/index.html"
+    ]
+  },
+  {
+    "description": "Match product lists in books.toscrape.com",
+    "patterns": {
+      "include": [
+        "books.toscrape.com/catalogue/category/",
+        "books.toscrape.com/|",
+        "books.toscrape.com/index.html|"
+      ]
+    },
+    "match": [
+      "https://books.toscrape.com/catalogue/category/books/mystery_3/index.html",
+      "https://books.toscrape.com/index.html",
+      "https://books.toscrape.com/"
+    ],
+    "no_match": [
+      "https://books.toscrape.com/catalogue/join_902/index.html"
+    ]
+  },
+  {
+    "description": "All Goodreads individual photo pages but excluding those from users",
+    "patterns": {
+      "include": [
+        "goodreads.com/photo/?photo=*"
+      ],
+      "exclude": [
+        "/photo/user/"
+      ]
+    },
+    "match": [
+      "https://www.goodreads.com/photo/author/2900145.Tracy_Ames?page=1&photo=113390",
+      "https://www.goodreads.com/photo/group/30626-goodreads-italia?photo=925633"
+    ],
+    "no_match": [
+      "https://www.goodreads.com/photo/user/44137919-mikee-readwithmikee?photo=1762284"
+    ]
+  }
+]

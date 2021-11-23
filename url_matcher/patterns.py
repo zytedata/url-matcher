@@ -204,9 +204,9 @@ class PatternMatcher:
             netloc_re = f"^(?:www.)?{netloc_re}$"
             self.netloc_re = re.compile(netloc_re, re.IGNORECASE)
         if ppath:
-            self.path_re = _path_or_fragment_re(ppath)
+            self.path_re = self._path_or_fragment_re(ppath)
         if pfragment:
-            self.fragment_re = _path_or_fragment_re(pfragment)
+            self.fragment_re = self._path_or_fragment_re(pfragment)
         if pquery:
             pkvs = parse_qs(pquery, keep_blank_values=True)
             query_re_dict = {}
@@ -252,14 +252,14 @@ class PatternMatcher:
                     return False
         return True
 
-
-def _path_or_fragment_re(path_or_fragment: str) -> Pattern:
-    """Wildcard expansion + end of line character"""
-    re_str = _wildcard_re_escape(path_or_fragment)
-    if re_str.endswith(r"\|"):
-        # case where the match must be exact
-        re_str = re_str[:-2]
-    else:
-        re_str += r".*"
-    re_str = f"^{re_str}$"
-    return re.compile(re_str, re.IGNORECASE)
+    @staticmethod
+    def _path_or_fragment_re(path_or_fragment: str) -> Pattern:
+        """Wildcard expansion + end of line character"""
+        re_str = _wildcard_re_escape(path_or_fragment)
+        if re_str.endswith(r"\|"):
+            # case where the match must be exact
+            re_str = re_str[:-2]
+        else:
+            re_str += r".*"
+        re_str = f"^{re_str}$"
+        return re.compile(re_str, re.IGNORECASE)

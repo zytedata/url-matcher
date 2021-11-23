@@ -105,7 +105,7 @@ class URLMatcher:
                 f"is invalid whereas the pattern 'example.com/product/*' isn't. "
                 f"The only exception is the empty pattern which matches everything "
                 f"and it is allowed. "
-                f"{id=}.",
+                f"id: {id}.",
                 id=id,
                 patterns=patterns,
                 wrong_patterns=wrong_patterns,

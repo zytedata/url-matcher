@@ -8,7 +8,7 @@ ignore =
     # Similar to above, let black take care of the formatting.
     W503,
 
-    # Refers to "necessary dict call - rewrite as a literal".
+    # Refers to "unnecessary dict call - rewrite as a literal".
     C408
 
 per-file-ignores =

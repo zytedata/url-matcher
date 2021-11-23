@@ -74,7 +74,7 @@ You can also directly invoke ``pre-commit run --all-files`` to run them without 
 Using sphinx-autobuild
 ~~~~~~~~~~~~~~~~~~~~~~
 
-When working on documentation,it is convenient to use sphinx-autobuild.
+When working on documentation, it is convenient to use sphinx-autobuild.
 First, run ``pip install -r docs/requirements.txt sphinx-autobuild``. Then run
 
 ::

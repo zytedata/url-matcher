@@ -54,7 +54,7 @@ A pattern is a URL that describes a set of URLs. For example, the
 pattern ``example.com`` describes any URL whose domain is ``example.com``
 or any of its subdomains.
 
-A single patter is sometimes not enough to describe which URLs to match.
+A single pattern is sometimes not enough to describe which URLs to match.
 This is why we can define instead a set of patterns that are matched against.
 There is then a list of positive patterns (``include``) and a list of
 negative ones (``exclude``).

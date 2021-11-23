@@ -120,13 +120,14 @@ class URLMatcher:
             self._add_matcher("", matcher)
 
     def remove(self, id: Any):
-        if id in self.patterns:
-            patterns = self.patterns[id]
-            del self.patterns[id]
-            for domain in patterns.get_domains():
-                self._del_matcher(domain, id)
-            if patterns.is_universal_pattern():
-                self._del_matcher("", id)
+        patterns = self.patterns.get(id)
+        if not patterns:
+            return
+        del self.patterns[id]
+        for domain in patterns.get_domains():
+            self._del_matcher(domain, id)
+        if patterns.is_universal_pattern():
+            self._del_matcher("", id)
 
     def get(self, id: Any) -> Optional[Patterns]:
         return self.patterns.get(id)

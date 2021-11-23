@@ -1,0 +1,179 @@
+[
+  {
+    "description": "Double slash at the start",
+    "pattern": "//strange_path/subpath",
+    "match": [
+      "http://example.com//strange_path/subpath/something_else"
+    ],
+    "no_match": [
+      "http://strange_path/subpath"
+    ]
+  },
+    {
+    "description": "Wildcard not allowed in query params",
+    "pattern": "example.com?id_gen_*&category=shoes",
+    "match": [
+      "http://example.com/prod?id_gen_=&category=shoes"
+    ],
+    "no_match": [
+      "http://www.example.com/product?category=shoes&id_gen_men=23",
+      "http://www.example.com/product?product_id=23&category=clothes",
+      "http://www.example.com/product?category=shoes",
+      "http://shop.example.com/prod?id_gen_women=45&category=shoes"
+    ]
+  },
+  {
+    "description": "Wildcard not allowed in query params (II)",
+    "pattern": "example.com/path?*_id=34",
+    "match": [
+      "https://example.com/path?_id=34"
+    ],
+    "no_match": [
+      "https://example.com/path?my_id=34"
+    ]
+  },
+  {
+    "description": "Wildcard not allowed in query params (III)",
+    "pattern": "example.com/path?*_id_*=*",
+    "match": [
+      "https://example.com/path?_id_=34"
+    ],
+    "no_match": [
+      "https://example.com/path?_id_product=34",
+      "https://example.com/path?my_id_product=34"
+    ]
+  },
+  {
+    "description": "Single wildcard in query parameter",
+    "pattern": "example.com/path?*",
+    "match": [
+      "https://example.com/path",
+      "https://example.com/path?id=34",
+      "https://example.com/path?=34"
+    ],
+    "no_match": [
+    ]
+  },
+  {
+    "description": "Mix values and wildcards in query params",
+    "pattern": "example.com?id=32&id=A*",
+    "match": [
+      "http://www.example.com/product?otm=2&id=32",
+      "http://example.com/prod?id=A45&category=shoes",
+      "http://www.example.com/product?otm=2&id=32&id=a43",
+      "http://www.example.com/product?&id=44&id=32"
+    ],
+    "no_match": [
+      "http://www.example.com/product?&id=44"
+    ]
+  },
+  {
+    "description": "Empty query",
+    "pattern": "example.com/path?",
+    "match": [
+      "https://example.com/path",
+      "https://example.com/path?id=34",
+      "https://example.com/path?=34"
+    ],
+    "no_match": [
+    ]
+  },
+  {
+    "description": "Port provided",
+    "pattern": "example.com:123",
+    "match": [
+      "http://www.example.com:123/product?category=shoes&id_gen_men=23",
+      "https://example.com:123/product?category=shoes&id_gen_men=23"
+    ],
+    "no_match": [
+      "http://www.example.com/product?category=shoes&id_gen_men=23"
+    ]
+  },
+  {
+    "description": "Port 80 ignored",
+    "pattern": "example.com:80",
+    "match": [
+      "http://www.example.com:80/product?category=shoes&id_gen_men=23",
+      "http://example.com/product?category=shoes&id_gen_men=23"
+    ],
+    "no_match": [
+      "https://www.example.com/product?category=shoes&id_gen_men=23",
+      "https://www.example.com:80/product?category=shoes&id_gen_men=23",
+      "http://www.example.com:123/product?category=shoes&id_gen_men=23"
+    ]
+  },
+  {
+    "description": "Port 80 ignored (II)",
+    "pattern": "http://example.com:80",
+    "match": [
+      "http://www.example.com:80/product?category=shoes&id_gen_men=23",
+      "http://example.com/product?category=shoes&id_gen_men=23"
+    ],
+    "no_match": [
+      "https://www.example.com/product?category=shoes&id_gen_men=23",
+      "https://www.example.com:80/product?category=shoes&id_gen_men=23",
+      "http://www.example.com:123/product?category=shoes&id_gen_men=23"
+    ]
+  },
+  {
+    "description": "Port 443 ignored",
+    "pattern": "example.com:443",
+    "match": [
+      "https://example.com:443/product?category=shoes&id_gen_men=23",
+      "https://example.com/product?category=shoes&id_gen_men=23"
+    ],
+    "no_match": [
+      "http://example.com/product?category=shoes&id_gen_men=23",
+      "http://example.com:443/product?category=shoes&id_gen_men=23",
+      "https://example.com:80/product?category=shoes&id_gen_men=23"
+    ]
+  },
+  {
+    "description": "Port 443 ignored (II)",
+    "pattern": "https://example.com:443",
+    "match": [
+      "https://example.com:443/product?category=shoes&id_gen_men=23",
+      "https://example.com/product?category=shoes&id_gen_men=23"
+    ],
+    "no_match": [
+      "http://example.com/product?category=shoes&id_gen_men=23",
+      "http://example.com:443/product?category=shoes&id_gen_men=23",
+      "https://example.com:80/product?category=shoes&id_gen_men=23"
+    ]
+  },
+  {
+    "description": "Messing with http, https, 80 and 443",
+    "pattern": "https://example.com:80",
+    "match": [
+      "https://www.example.com:80/product?category=shoes&id_gen_men=23"
+    ],
+    "no_match": [
+      "http://example.com/product?category=shoes&id_gen_men=23",
+      "https://www.example.com/product?category=shoes&id_gen_men=23",
+      "http://www.example.com:80/product?category=shoes&id_gen_men=23"
+    ]
+  },
+  {
+    "description": "Messing with http, https, 80 and 443 (II)",
+    "pattern": "http://example.com:443",
+    "match": [
+      "http://www.example.com:443/product?category=shoes&id_gen_men=23"
+    ],
+    "no_match": [
+      "https://example.com:443/product?category=shoes&id_gen_men=23",
+      "https://www.example.com/product?category=shoes&id_gen_men=23",
+      "http://www.example.com/product?category=shoes&id_gen_men=23"
+    ]
+  },
+  {
+    "description": "IPs also works",
+    "pattern": "127.0.0.1",
+    "match": [
+      "http://127.0.0.1:80/product?category=shoes&id_gen_men=23",
+      "https://127.0.0.1/product?category=shoes&id_gen_men=23"
+    ],
+    "no_match": [
+      "http://example.com/product?category=shoes&id_gen_men=23"
+    ]
+  }
+]

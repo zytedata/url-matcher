@@ -16,7 +16,8 @@ class Patterns:
     priority: int = 500
 
     def get_domains(self) -> List[str]:
-        return [domain for pattern in self.include if (domain := get_pattern_domain(pattern))]
+        domains = [get_pattern_domain(pattern) for pattern in self.include]
+        return [domain for domain in domains if domain]
 
     def get_includes_without_domain(self) -> List[str]:
         return [pattern for pattern in self.include if get_pattern_domain(pattern) is None]

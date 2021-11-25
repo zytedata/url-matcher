@@ -5,7 +5,7 @@ from tldextract import tldextract
 
 
 @lru_cache(100)
-def get_domain(url):
+def get_domain(url) -> str:
     """
     Return the domain without any subdomain
 
@@ -21,5 +21,5 @@ def get_domain(url):
     return ".".join(el for el in tldextract.extract(url)[-2:] if el)
 
 
-def is_absolute(url):
+def is_absolute(url) -> bool:
     return bool(urlparse(url).netloc)

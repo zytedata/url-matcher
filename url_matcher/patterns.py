@@ -99,7 +99,7 @@ def _urlparse(url: str) -> ParseTuple:
     return ParseTuple(scheme, netloc, path, query, fragment)
 
 
-def _wildcard_re_escape(text: str):
+def _wildcard_re_escape(text: str) -> str:
     return re.escape(text).replace("\\*", ".*")
 
 

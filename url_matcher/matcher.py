@@ -33,7 +33,7 @@ class Patterns:
                 return False
         return True
 
-    def get_includes_for(self, domain):
+    def get_includes_for(self, domain) -> List[str]:
         return [pattern for pattern in self.include if get_pattern_domain(pattern) == domain]
 
 

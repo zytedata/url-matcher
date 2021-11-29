@@ -1,51 +1,57 @@
 [
   {
     "description": "Priority is respected",
-    "rules": {
-      "1": {
-        "include": ["example.com/path"],
-        "exclude": [],
-        "priority": 500
-      },
-      "2": {
-        "include": ["example.com"],
-        "exclude": [],
-        "priority": 600
-      },
-      "3": {
-        "include": ["example.com"],
-        "exclude": [],
-        "priority": 500
-      },
-      "3": {
-        "include": ["example.com"],
-        "exclude": [],
-        "priority": 400
-      }
-    },
+    "rules": [
+      [
+        "1", {
+          "include": ["example.com/path"],
+          "exclude": [],
+          "priority": 500
+        }],
+      [
+        "2", {
+          "include": ["example.com"],
+          "exclude": [],
+          "priority": 600
+        }],
+      [
+        "2", {
+          "include": ["example.com"],
+          "exclude": [],
+          "priority": 550
+        }],
+      [
+        "3", {
+          "include": ["example.com"],
+          "exclude": [],
+          "priority": 400
+        }]
+    ],
     "cases": [
-      ["http://example.com/path", "2"]
+      [
+        "http://example.com/path", "2"
+      ]
     ]
   },
   {
     "description": "Use the most specific includes to resolve conflicts",
-    "rules": {
-      "1": {
+    "rules": [
+      ["1", {
         "include": ["example.com", "blog.example.org/path?id=12#fragment"]
-      },
-      "2": {
+      }],
+      ["2", {
         "include": ["blog.example.com", "blog.example.org/path?id=12"]
-      },
-      "3": {
+      }],
+      ["3", {
         "include": ["blog.example.com/path", "blog.example.org/path"]
-      },
-      "4": {
+      }],
+      ["4", {
         "include": ["blog.example.com/path?query=23", "blog.example.org"]
-      },
-      "5": {
+      }],
+      ["5", {
         "include": ["blog.example.com/path?query=23#fragment", "example.org"]
-      }
-    },
+      }]
+    ],
     "cases": [
       ["http://example.com", "1"],
       ["http://example.com/other", "1"],
@@ -64,18 +70,18 @@
   },
   {
     "description": "Id is respected on conflicts",
-    "rules": {
-       "3": {
+    "rules": [
+       ["3", {
           "include": ["example.com"],
           "exclude": ["/something"]
-      },
-      "1": {
+      }],
+      ["1", {
         "include": ["example.com"]
-      },
-      "2": {
+      }],
+      ["2", {
         "include": ["example.com"]
-      }
-    },
+      }]
+    ],
     "cases": [
       ["http://example.com", "3"],
       ["http://example.org", null]
@@ -83,18 +89,18 @@
   },
   {
     "description": "Id is respected on conflicts",
-    "rules": {
-       "3": {
+    "rules": [
+       ["3", {
           "include": ["example.com"],
           "exclude": ["/something"]
-      },
-      "1": {
+      }],
+      ["1", {
         "include": ["example.com"]
-      },
-      "2": {
+      }],
+      ["2", {
         "include": ["example.com"]
-      }
-    },
+      }]
+    ],
     "cases": [
       ["http://example.com", "3"],
       ["http://example.org", null]
@@ -102,24 +108,24 @@
   },
   {
     "description": "Domain rules have always priority over universal ones",
-    "rules": {
-      "1": {
+    "rules": [
+      ["1", {
         "include": ["example.com"],
         "priority": 500
-      },
-      "2": {
+      }],
+      ["2", {
         "include": ["example.com"],
         "priority": 500
-      },
-      "3": {
+      }],
+      ["3", {
         "include": [],
         "priority": 600
-      },
-      "4": {
+      }],
+      ["4", {
         "include": [""],
         "priority": 600
-      }
-    },
+      }]
+    ],
     "cases": [
       ["http://example.com", "2"],
       ["http://other", "4"]

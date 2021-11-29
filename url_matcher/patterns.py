@@ -103,7 +103,7 @@ def _wildcard_re_escape(text: str) -> str:
     return re.escape(text).replace("\\*", ".*")
 
 
-def _join_path_and_params(path, params):
+def _join_path_and_params(path: str, params: str) -> str:
     if params:
         return f"{path};{params}"
     else:

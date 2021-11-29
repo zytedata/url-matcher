@@ -261,5 +261,5 @@ class PatternMatcher:
             re_str = re_str[:-2]
         else:
             re_str += r".*"
-        re_str = f"^{re_str}$"
+        re_str = rf"^{re_str}$"
         return re.compile(re_str, re.IGNORECASE)

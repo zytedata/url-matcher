@@ -33,7 +33,7 @@ class Patterns:
                 return False
         return True
 
-    def get_includes_for(self, domain) -> List[str]:
+    def get_includes_for(self, domain: str) -> List[str]:
         return [pattern for pattern in self.include if get_pattern_domain(pattern) == domain]
 
 
@@ -153,7 +153,7 @@ class URLMatcher:
           * Rule identifier (descending)
         """
 
-        def sort_key(matcher: PatternsMatcher):
+        def sort_key(matcher: PatternsMatcher) -> Tuple:
             sorted_includes = sorted(map(hierarchical_str, matcher.patterns.get_includes_for(domain)))
             return (matcher.patterns.priority, sorted_includes, matcher.identifier)
 

@@ -39,7 +39,7 @@ class Patterns:
 
 @dataclass
 class PatternsMatcher:
-    id: Any
+    identifier: Any
     patterns: Patterns
     include_matchers: List[PatternMatcher] = field(init=False)
     exclude_matchers: List[PatternMatcher] = field(init=False)
@@ -62,9 +62,9 @@ class PatternsMatcher:
 
 
 class IncludePatternsWithoutDomainError(ValueError):
-    def __init__(self, *args, id: Any, patterns: Patterns, wrong_patterns: List[str]):
+    def __init__(self, *args, identifier: Any, patterns: Patterns, wrong_patterns: List[str]):
         super().__init__(*args)
-        self.id = id
+        self.id = identifier
         self.patterns = patterns
         self.wrong_patterns = wrong_patterns
 
@@ -84,7 +84,7 @@ class URLMatcher:
             assert matcher.match("http://example.com/product/a_product.html") == 1
             assert matcher.match("http://other.com/a_different_page") == 2
 
-        :param data: A map or a list of tuples with id, patterns pairs to
+        :param data: A map or a list of tuples with identifier, patterns pairs to
                      initialize the object from
         """
         self.matchers_by_domain: Dict[str, List[PatternsMatcher]] = {}
@@ -92,10 +92,10 @@ class URLMatcher:
 
         if data:
             items = data.items() if isinstance(data, Mapping) else data
-            for id, patterns in items:
-                self.add_or_update(id, patterns)
+            for identifier, patterns in items:
+                self.add_or_update(identifier, patterns)
 
-    def add_or_update(self, id: Any, patterns: Patterns):
+    def add_or_update(self, identifier: Any, patterns: Patterns):
         if not patterns.all_includes_have_domain() and not patterns.is_universal_pattern():
             wrong_patterns = [p for p in patterns.get_includes_without_domain() if p]
             raise IncludePatternsWithoutDomainError(
@@ -105,38 +105,38 @@ class URLMatcher:
                 f"is invalid whereas the pattern 'example.com/product/*' isn't. "
                 f"The only exception is the empty pattern which matches everything "
                 f"and it is allowed. "
-                f"id: {id}.",
-                id=id,
+                f"identifier: {identifier}.",
+                identifier=identifier,
                 patterns=patterns,
                 wrong_patterns=wrong_patterns,
             )
-        if id in self.patterns:
-            self.remove(id)
-        self.patterns[id] = patterns
-        matcher = PatternsMatcher(id, patterns)
+        if identifier in self.patterns:
+            self.remove(identifier)
+        self.patterns[identifier] = patterns
+        matcher = PatternsMatcher(identifier, patterns)
         for domain in patterns.get_domains():
             self._add_matcher(domain, matcher)
         if patterns.is_universal_pattern():
             self._add_matcher("", matcher)
 
-    def remove(self, id: Any):
-        patterns = self.patterns.get(id)
+    def remove(self, identifier: Any):
+        patterns = self.patterns.get(identifier)
         if not patterns:
             return
-        del self.patterns[id]
+        del self.patterns[identifier]
         for domain in patterns.get_domains():
-            self._del_matcher(domain, id)
+            self._del_matcher(domain, identifier)
         if patterns.is_universal_pattern():
-            self._del_matcher("", id)
+            self._del_matcher("", identifier)
 
-    def get(self, id: Any) -> Optional[Patterns]:
-        return self.patterns.get(id)
+    def get(self, identifier: Any) -> Optional[Patterns]:
+        return self.patterns.get(identifier)
 
     def match(self, url: str) -> Optional[Any]:
         domain = get_domain(url)
         for matcher in chain(self.matchers_by_domain.get(domain) or [], self.matchers_by_domain.get("") or []):
             if matcher.match(url):
-                return matcher.id
+                return matcher.identifier
         return None
 
     def _sort_domain(self, domain: str):
@@ -145,24 +145,24 @@ class URLMatcher:
         the first rule matching wins.
 
         A total ordering is defined. This is ensured by using including
-        the id in the sorting criteria
+        the identifier in the sorting criteria
 
         Sorting criteria:
           * Priority (descending)
           * Sorted list of includes for this domain (descending)
-          * Rule id (descending)
+          * Rule identifier (descending)
         """
 
         def sort_key(matcher: PatternsMatcher):
             sorted_includes = sorted(map(hierarchical_str, matcher.patterns.get_includes_for(domain)))
-            return (matcher.patterns.priority, sorted_includes, matcher.id)
+            return (matcher.patterns.priority, sorted_includes, matcher.identifier)
 
         self.matchers_by_domain[domain].sort(key=sort_key, reverse=True)
 
-    def _del_matcher(self, domain: str, id: Any):
+    def _del_matcher(self, domain: str, identifier: Any):
         matchers = self.matchers_by_domain[domain]
         for idx in range(len(matchers)):
-            if matchers[idx].id == id:
+            if matchers[idx].identifier == identifier:
                 del matchers[idx]
                 break
         if not matchers:

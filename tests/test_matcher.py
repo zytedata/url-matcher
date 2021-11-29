@@ -1,6 +1,6 @@
 import pytest
-from util import load_json_fixture
 
+from tests.util import load_json_fixture
 from url_matcher import Patterns, URLMatcher
 from url_matcher.matcher import IncludePatternsWithoutDomainError
 

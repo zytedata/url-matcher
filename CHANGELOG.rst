@@ -5,6 +5,8 @@ Changelog
 TBR
 ------------------
 
+* Implement __hash__() for Patterns so instances can easily be deduped based on
+  its hash uniqueness.
 * Remove Python 3.6 support
 
 0.1.0 (2021-11-19)

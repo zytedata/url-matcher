@@ -36,6 +36,10 @@ class Patterns:
     def get_includes_for(self, domain: str) -> List[str]:
         return [pattern for pattern in self.include if get_pattern_domain(pattern) == domain]
 
+    def __hash__(self):
+        """Allows unique Patterns to be easily identified and deduped."""
+        return hash((tuple(self.include), tuple(self.exclude), self.priority))
+
 
 @dataclass
 class PatternsMatcher:

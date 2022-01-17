@@ -110,3 +110,13 @@ def test_matcher_add_remove_get():
     # Wrong patterns
     with pytest.raises(IncludePatternsWithoutDomainError):
         matcher.add_or_update(1, Patterns(["/no_domain_pattern"]))
+
+
+def test_dedupe_unique_patterns():
+
+    p = [
+        Patterns(["example.com"]),
+        Patterns(include=["example.com"], exclude=[], priority=500),
+    ]
+
+    assert len(set(p)) == 1

@@ -25,9 +25,9 @@ Let see how the library can handle this situation:
     from url_matcher import URLMatcher, Patterns
 
     matcher = URLMatcher()
-    matcher.add_or_update("us_proxy", Patterns(["site1.com"]))
-    matcher.add_or_update("uk_proxy", Patterns(["site2.com/uk"]))
-    matcher.add_or_update("ie_proxy", Patterns(["site2.com/ie"]))
+    matcher.add_or_update("us_proxy", Patterns(("site1.com",)))
+    matcher.add_or_update("uk_proxy", Patterns(("site2.com/uk",)))
+    matcher.add_or_update("ie_proxy", Patterns(("site2.com/ie",)))
 
     proxy = matcher.match("http://site1.com/articles/article1")
     # proxy is "us_proxy" here
@@ -66,8 +66,8 @@ This is an example of a rule using such a set of patterns:
 
 .. code-block:: python
 
-    patterns = Patterns(include=["example.com", "example.org"],
-                        exclude=["*.jpg|", "*.jpeg|"])
+    patterns = Patterns(include=("example.com", "example.org"),
+                        exclude=("*.jpg|", "*.jpeg|"))
     matcher.add_or_update("proxy_1", patterns))
 
 Patterns

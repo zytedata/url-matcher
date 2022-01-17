@@ -9,18 +9,18 @@ from url_matcher.patterns import PatternMatcher, get_pattern_domain, hierarchica
 from url_matcher.util import get_domain
 
 
-@dataclass
+@dataclass(frozen=True)
 class Patterns:
-    include: List[str]
-    exclude: List[str] = field(default_factory=list)
+    include: Tuple[str, ...]
+    exclude: Tuple[str, ...] = field(default_factory=tuple)
     priority: int = 500
 
-    def get_domains(self) -> List[str]:
+    def get_domains(self) -> Tuple[str, ...]:
         domains = [get_pattern_domain(pattern) for pattern in self.include]
-        return [domain for domain in domains if domain]
+        return tuple(domain for domain in domains if domain)
 
-    def get_includes_without_domain(self) -> List[str]:
-        return [pattern for pattern in self.include if get_pattern_domain(pattern) is None]
+    def get_includes_without_domain(self) -> Tuple[str, ...]:
+        return tuple(pattern for pattern in self.include if get_pattern_domain(pattern) is None)
 
     def all_includes_have_domain(self) -> bool:
         """Return true if all the include patterns have a domain"""
@@ -33,12 +33,8 @@ class Patterns:
                 return False
         return True
 
-    def get_includes_for(self, domain: str) -> List[str]:
-        return [pattern for pattern in self.include if get_pattern_domain(pattern) == domain]
-
-    def __hash__(self):
-        """Allows unique Patterns to be easily identified and deduped."""
-        return hash((tuple(self.include), tuple(self.exclude), self.priority))
+    def get_includes_for(self, domain: str) -> Tuple[str, ...]:
+        return tuple(pattern for pattern in self.include if get_pattern_domain(pattern) == domain)
 
 
 @dataclass

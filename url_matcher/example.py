@@ -12,12 +12,12 @@ from url_matcher.matcher import IncludePatternsWithoutDomainError
 matcher = URLMatcher()
 
 # Let's add a rule for books to scrape product
-patterns = Patterns(include=["books.toscrape.com/catalogue/"], exclude=["/catalogue/category/"])
+patterns = Patterns(include=("books.toscrape.com/catalogue/",), exclude=("/catalogue/category/",))
 matcher.add_or_update("books product", patterns)
 
 # Now a rule for product list in books to scrape
 patterns = Patterns(
-    include=["books.toscrape.com/catalogue/category/", "books.toscrape.com/|", "books.toscrape.com/index.html|"]
+    include=("books.toscrape.com/catalogue/category/", "books.toscrape.com/|", "books.toscrape.com/index.html|")
 )
 matcher.add_or_update("books productList", patterns)
 
@@ -36,19 +36,19 @@ assert not matcher.match(url)
 # Adding a pattern without domain fails
 
 try:
-    matcher.add_or_update("won't work", Patterns(["/path"]))
+    matcher.add_or_update("won't work", Patterns(("/path",)))
     raise AssertionError
 except IncludePatternsWithoutDomainError:
     ...
 
 # But the empty pattern works. It matches anything
 
-assert URLMatcher({"Anything": Patterns([""])}).match("http://anything")
+assert URLMatcher({"Anything": Patterns(("", ))}).match("http://anything")
 
 # Now let's see that priorities are working. They are applied only if several
 # rules match the URL.
 
-patterns = Patterns(["priority.com"])
+patterns = Patterns(("priority.com",))
 matcher.add_or_update("low priority", dataclasses.replace(patterns, priority=200))
 matcher.add_or_update("high priority", dataclasses.replace(patterns, priority=300))
 assert matcher.match("http://priority.com") == "high priority"

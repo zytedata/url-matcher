@@ -43,7 +43,7 @@ except IncludePatternsWithoutDomainError:
 
 # But the empty pattern works. It matches anything
 
-assert URLMatcher({"Anything": Patterns(("", ))}).match("http://anything")
+assert URLMatcher({"Anything": Patterns(("",))}).match("http://anything")
 
 # Now let's see that priorities are working. They are applied only if several
 # rules match the URL.

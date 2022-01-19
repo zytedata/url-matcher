@@ -115,16 +115,18 @@ def test_matcher_add_remove_get():
 def test_dedupe_unique_patterns():
 
     p = [
-        Patterns(("example.com",)),
-        Patterns(include=("example.com",), exclude=tuple(), priority=500),
+        Patterns(["example.com"]),
+        Patterns(include=["example.com"], exclude=None, priority=500),
     ]
-
     assert len(set(p)) == 1
+
+    p.append(Patterns(["example.com"], priority=1))
+    assert len(set(p)) == 2
 
 
 def test_patterns_immutability():
 
-    p = Patterns(("example.com",))
+    p = Patterns(["example.com"])
 
     with pytest.raises(AttributeError):
         p.priority = 1

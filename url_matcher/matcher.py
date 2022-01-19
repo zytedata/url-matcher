@@ -9,18 +9,35 @@ from url_matcher.patterns import PatternMatcher, get_pattern_domain, hierarchica
 from url_matcher.util import get_domain
 
 
-@dataclass(frozen=True)
+@dataclass(init=False, frozen=True)
 class Patterns:
     include: Tuple[str, ...]
-    exclude: Tuple[str, ...] = field(default_factory=tuple)
-    priority: int = 500
+    exclude: Tuple[str, ...]
+    priority: int
 
-    def get_domains(self) -> Tuple[str, ...]:
+    def __init__(self, include: List[str], exclude: Optional[List[str]] = None, priority: int = 500):
+        # The initialization is manually set so that we can support an API of
+        # accepting and returning lists. However, tuples are being used underneath
+        # that class so that the attributes are truly immutable, in addition to
+        # being frozen=True.
+        # Using lists are far less likely to have human typing mistakes compared to
+        # tuples since the trailing `,` char can easily be missed out. For
+        # example:
+        #     *  ("element") is not the same as ("element",) which is a tuple.
+        # Lastly, the manner of how we set the attribute values below is in line
+        # with how Python's own `dataclasses` library assign attributes to frozen
+        # classes. Here's a reference:
+        #     * https://github.com/python/cpython/blob/main/Lib/dataclasses.py#L1119-L1122
+        object.__setattr__(self, "include", tuple(include))
+        object.__setattr__(self, "exclude", tuple(exclude or []))
+        object.__setattr__(self, "priority", priority)
+
+    def get_domains(self) -> List[str]:
         domains = [get_pattern_domain(pattern) for pattern in self.include]
-        return tuple(domain for domain in domains if domain)
+        return [domain for domain in domains if domain]
 
-    def get_includes_without_domain(self) -> Tuple[str, ...]:
-        return tuple(pattern for pattern in self.include if get_pattern_domain(pattern) is None)
+    def get_includes_without_domain(self) -> List[str]:
+        return [pattern for pattern in self.include if get_pattern_domain(pattern) is None]
 
     def all_includes_have_domain(self) -> bool:
         """Return true if all the include patterns have a domain"""
@@ -33,8 +50,8 @@ class Patterns:
                 return False
         return True
 
-    def get_includes_for(self, domain: str) -> Tuple[str, ...]:
-        return tuple(pattern for pattern in self.include if get_pattern_domain(pattern) == domain)
+    def get_includes_for(self, domain: str) -> List[str]:
+        return [pattern for pattern in self.include if get_pattern_domain(pattern) == domain]
 
 
 @dataclass

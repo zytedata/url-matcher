@@ -2,7 +2,7 @@
 Changelog
 =========
 
-TBR
+0.2.0 (2022-02-01)
 ------------------
 
 * Update ``Patterns`` to be **frozen** so instances can easily be deduped based

@@ -27,7 +27,7 @@ class Patterns:
         # Lastly, the manner of how we set the attribute values below is in line
         # with how Python's own `dataclasses` library assign attributes to frozen
         # classes. Here's a reference:
-        #     * https://github.com/python/cpython/blob/main/Lib/dataclasses.py#L1119-L1122
+        #     * https://github.com/python/cpython/blob/v3.10.2/Lib/dataclasses.py#L1117-L1120
         object.__setattr__(self, "include", tuple(include))
         object.__setattr__(self, "exclude", tuple(exclude or []))
         object.__setattr__(self, "priority", priority)

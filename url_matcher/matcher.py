@@ -9,11 +9,28 @@ from url_matcher.patterns import PatternMatcher, get_pattern_domain, hierarchica
 from url_matcher.util import get_domain
 
 
-@dataclass
+@dataclass(init=False, frozen=True)
 class Patterns:
-    include: List[str]
-    exclude: List[str] = field(default_factory=list)
-    priority: int = 500
+    include: Tuple[str, ...]
+    exclude: Tuple[str, ...]
+    priority: int
+
+    def __init__(self, include: List[str], exclude: Optional[List[str]] = None, priority: int = 500):
+        # The initialization is manually set so that we can support an API of
+        # accepting and returning lists. However, tuples are being used underneath
+        # that class so that the attributes are truly immutable, in addition to
+        # being frozen=True.
+        # Using lists are far less likely to have human typing mistakes compared to
+        # tuples since the trailing `,` char can easily be missed out. For
+        # example:
+        #     *  ("element") is not the same as ("element",) which is a tuple.
+        # Lastly, the manner of how we set the attribute values below is in line
+        # with how Python's own `dataclasses` library assign attributes to frozen
+        # classes. Here's a reference:
+        #     * https://github.com/python/cpython/blob/v3.10.2/Lib/dataclasses.py#L1117-L1120
+        object.__setattr__(self, "include", tuple(include))
+        object.__setattr__(self, "exclude", tuple(exclude or []))
+        object.__setattr__(self, "priority", priority)
 
     def get_domains(self) -> List[str]:
         domains = [get_pattern_domain(pattern) for pattern in self.include]

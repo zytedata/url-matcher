@@ -14,7 +14,7 @@ url-matcher
    :target: https://github.com/zytedata/url-matcher/actions
    :alt: Build Status
 
-.. image:: https://codecov.io/github/zytedata/url-matcher/coverage.svg?branch=master
+.. image:: https://codecov.io/github/zytedata/url-matcher/coverage.svg?branch=main
    :target: https://codecov.io/gh/zytedata/url-matcher
    :alt: Coverage report
 

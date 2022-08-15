@@ -220,7 +220,7 @@ class PatternMatcher:
                     pparam = pparam.replace("*", "")
                 if not pparam:
                     continue
-                param_re = fr"^(?:{'|'.join([_wildcard_re_escape(value) for value in values])})$"
+                param_re = rf"^(?:{'|'.join([_wildcard_re_escape(value) for value in values])})$"
                 query_re_dict[pparam] = re.compile(param_re, re.IGNORECASE)
             self.query_re_dict = query_re_dict or None
 

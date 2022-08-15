@@ -20,12 +20,12 @@ from url_matcher import __version__  # noqa: E402
 
 # -- Project information -----------------------------------------------------
 
-project = u"url-matcher"
-copyright = u"2021, Zyte"
-author = u"Zyte"
+project = "url-matcher"
+copyright = "2021, Zyte"
+author = "Zyte"
 
 # The short X.Y version
-version = u""
+version = ""
 # The full version, including alpha/beta/rc tags
 release = __version__.__version__
 
@@ -65,12 +65,12 @@ master_doc = "index"
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = [u"_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
@@ -142,8 +142,8 @@ latex_documents = [
     (
         master_doc,
         "url-matcher.tex",
-        u"url-matcher Documentation",
-        u"Zyte",
+        "url-matcher Documentation",
+        "Zyte",
         "manual",
     ),
 ]
@@ -153,7 +153,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "url-matcher", u"url-matcher Documentation", [author], 1)]
+man_pages = [(master_doc, "url-matcher", "url-matcher Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -165,7 +165,7 @@ texinfo_documents = [
     (
         master_doc,
         "url-matcher",
-        u"url-matcher Documentation",
+        "url-matcher Documentation",
         author,
         "url-matcher",
         "URL matching rules library to connect URLs with resources",

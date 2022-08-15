@@ -1,0 +1,4 @@
+# Contains commits to be ignored due to linting
+
+# https://github.com/zytedata/url-matcher/pull/5
+47197448e5ac7e4d9dc9f764231a6915e7fb2295

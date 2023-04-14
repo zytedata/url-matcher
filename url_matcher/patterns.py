@@ -216,6 +216,7 @@ class PatternMatcher:
                     warnings.warn(
                         f"Wildcard expansion is only allowed for the values in the query parameter. Pattern: '{self.pattern}'",
                         SyntaxWarning,
+                        stacklevel=3,
                     )
                     pparam = pparam.replace("*", "")
                 if not pparam:

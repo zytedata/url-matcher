@@ -10,4 +10,3 @@ Module ``url_matcher``
 
 .. automodule:: url_matcher
     :members:
-    :noindex:

@@ -28,7 +28,7 @@ setup(
         ]
     ),
     install_requires=[
-        "tldextract",
+        "tldextract>=1.2",
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",

@@ -18,7 +18,8 @@ def get_domain(url: str) -> str:
     >>> get_domain("http://127.0.0.1")
     '127.0.0.1'
     """
-    return ".".join(el for el in tldextract.extract(url)[-2:] if el)
+    parts = tldextract.extract(url)
+    return ".".join(part for part in (parts.domain, parts.suffix) if part)
 
 
 def is_absolute(url: str) -> bool:

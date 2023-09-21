@@ -2,6 +2,13 @@
 Changelog
 =========
 
+0.3.0 (2023-09-21)
+------------------
+
+* Drop Python 3.7 support, make Python 3.11 support official.
+* Support tldextract >= 3.6, make the requirement of tldextract >= 1.2
+  explicit.
+
 0.2.0 (2022-02-01)
 ------------------
 

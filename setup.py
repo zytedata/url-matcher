@@ -27,7 +27,7 @@ setup(
             "tests",
         ]
     ),
-    python_requires='>=3.8',
+    python_requires=">=3.8",
     install_requires=[
         "tldextract>=1.2",
     ],

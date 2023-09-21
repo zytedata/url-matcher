@@ -27,8 +27,9 @@ setup(
             "tests",
         ]
     ),
+    python_requires=">=3.8",
     install_requires=[
-        "tldextract",
+        "tldextract>=1.2",
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -37,9 +38,9 @@ setup(
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
 )

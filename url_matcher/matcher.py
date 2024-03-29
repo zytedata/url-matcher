@@ -3,7 +3,18 @@ The matcher module contains the UrlMatcher class.
 """
 from dataclasses import dataclass, field
 from itertools import chain
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Tuple, Union
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Mapping,
+    Optional,
+    Set,
+    Tuple,
+    Union,
+)
 
 from url_matcher.patterns import PatternMatcher, get_pattern_domain, hierarchical_str
 from url_matcher.util import get_domain
@@ -150,11 +161,16 @@ class URLMatcher:
         return self.patterns.get(identifier)
 
     def match(self, url: str) -> Optional[Any]:
+        return next(self.match_all(url), None)
+
+    def match_all(self, url: str) -> Iterator[Any]:
         domain = get_domain(url)
+        unique: Set[Any] = set()
         for matcher in chain(self.matchers_by_domain.get(domain) or [], self.matchers_by_domain.get("") or []):
             if matcher.match(url):
-                return matcher.identifier
-        return None
+                if matcher.identifier not in unique:
+                    unique.add(matcher.identifier)
+                    yield matcher.identifier
 
     def _sort_domain(self, domain: str):
         """

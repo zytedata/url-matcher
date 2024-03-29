@@ -19,8 +19,10 @@ def test_matcher_single_rule(patterns, match, no_match):
     matcher.add_or_update(23, Patterns(**patterns))
     for url in match:
         assert matcher.match(url) == 23
+        assert list(matcher.match_all(url)) == [23]
     for url in no_match:
         assert not matcher.match(url)
+        assert list(matcher.match_all(url)) == []
 
 
 @pytest.mark.parametrize(
@@ -33,8 +35,10 @@ def test_matcher_single_rule_corner_cases(patterns, match, no_match):
     matcher.add_or_update(23, Patterns(**patterns))
     for url in match:
         assert matcher.match(url) == 23
+        assert list(matcher.match_all(url)) == [23]
     for url in no_match:
         assert not matcher.match(url)
+        assert list(matcher.match_all(url)) == []
 
 
 @pytest.mark.parametrize(
@@ -130,3 +134,18 @@ def test_patterns_immutability():
 
     with pytest.raises(AttributeError):
         p.priority = 1
+
+
+def test_match_all():
+    matcher = URLMatcher()
+    matcher.add_or_update(1, Patterns(include=["example.com"]))
+    matcher.add_or_update(2, Patterns(include=["foo.example.com"]))
+    matcher.add_or_update(3, Patterns(include=["bar.example.com/products"]))
+    matcher.add_or_update(4, Patterns(include=["bar.example.com"]))
+
+    assert list(matcher.match_all("http://example.com")) == [1]
+    assert list(matcher.match_all("http://foo.example.com")) == [2, 1]
+    assert list(matcher.match_all("http://bar.example.com")) == [4, 1]
+    assert list(matcher.match_all("http://example.com/products")) == [1]
+    assert list(matcher.match_all("http://foo.example.com/products")) == [2, 1]
+    assert list(matcher.match_all("http://bar.example.com/products")) == [3, 4, 1]

@@ -1,6 +1,7 @@
 """
 The matcher module contains the UrlMatcher class.
 """
+
 from dataclasses import dataclass, field
 from itertools import chain
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Tuple, Union

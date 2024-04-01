@@ -23,11 +23,12 @@ jobs:
         - python-version: '3.9'
         - python-version: '3.10'
         - python-version: '3.11'
+        - python-version: '3.12'
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -46,12 +47,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10']
-        tox-job: ["mypy", "docs"]
+        python-version: ['3.12']
+        tox-job: ["mypy", "docs", "pre-commit", "twinecheck"]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -61,19 +62,3 @@ jobs:
     - name: tox
       run: |
         tox -e ${{ matrix.tox-job }}
-
-  pre-commit:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install pre-commit
-    - name: pre-commit linters
-      run: |
-        pre-commit install && pre-commit run --all-files

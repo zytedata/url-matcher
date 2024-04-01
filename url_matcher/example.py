@@ -1,6 +1,7 @@
 """
 Example of usage of the URLMatcher library
 """
+
 import dataclasses
 import random
 import time
@@ -100,6 +101,6 @@ for domain, url in urls:
 end = time.perf_counter()
 
 # It took in my machine ~ 0.04 millis per URL
-print(f"{((end-start)/N_URLS)*1000:.3f} milliseconds per URL. Total {end-start} seconds to match {N_URLS} URLs")
+print(f"{((end - start) / N_URLS) * 1000:.3f} milliseconds per URL. Total {end - start} seconds to match {N_URLS} URLs")
 
 print("Everything worked fine!")

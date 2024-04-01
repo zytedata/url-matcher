@@ -34,7 +34,8 @@ class Patterns:
 
     def get_domains(self) -> List[str]:
         domains = [get_pattern_domain(pattern) for pattern in self.include]
-        return [domain for domain in domains if domain]
+        # remove duplicate domains preserving the order
+        return list(dict.fromkeys(domain for domain in domains if domain))
 
     def get_includes_without_domain(self) -> List[str]:
         return [pattern for pattern in self.include if get_pattern_domain(pattern) is None]

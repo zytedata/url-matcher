@@ -111,6 +111,16 @@ def test_matcher_add_remove_get():
     with pytest.raises(IncludePatternsWithoutDomainError):
         matcher.add_or_update(1, Patterns(["/no_domain_pattern"]))
 
+    # Patterns with the same domain shouldn't produce multiple matchers
+    patterns = Patterns(["example.com/products", "example.com/brands"])
+    matcher.add_or_update(1, patterns)
+    assert len(matcher.matchers_by_domain) == 1
+    assert len(matcher.matchers_by_domain["example.com"]) == 1
+    assert len(matcher.patterns) == 1
+    assert matcher.match("http://example.com") is None
+    assert matcher.match("http://example.com/products") == 1
+    assert matcher.match("http://example.com/brands") == 1
+
 
 def test_dedupe_unique_patterns():
 

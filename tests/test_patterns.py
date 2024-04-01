@@ -1,6 +1,6 @@
 import pytest
-from util import load_json_fixture
 
+from tests.util import load_json_fixture
 from url_matcher.patterns import PatternMatcher
 
 PATTERNS_FIXTURE = load_json_fixture("single_patterns")

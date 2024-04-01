@@ -1,8 +1,9 @@
 import pytest
 
-from tests.util import load_json_fixture
 from url_matcher import Patterns, URLMatcher
 from url_matcher.matcher import IncludePatternsWithoutDomainError
+
+from .util import load_json_fixture
 
 PATTERNS_FIXTURE = load_json_fixture("patterns")
 CORNER_CASES_FIXTURE = load_json_fixture("patterns_corner_cases")

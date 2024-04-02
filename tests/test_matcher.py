@@ -125,6 +125,7 @@ def test_matcher_add_remove_get():
     assert matcher.match("http://example.com") is None
     assert matcher.match("http://example.com/products") == 1
     assert matcher.match("http://example.com/brands") == 1
+    assert len(list(matcher.match_all("http://example.com/products"))) == 1
 
 
 def test_dedupe_unique_patterns():

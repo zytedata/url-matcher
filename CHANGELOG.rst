@@ -2,6 +2,17 @@
 Changelog
 =========
 
+0.4.0 (YYYY-MM-DD)
+------------------
+
+* Added official support for Python 3.12.
+* Added the :meth:`.URLMatcher.match_all` method that returns all matching
+  identifiers.
+* Adding a :class:`~.Patterns` instance with several patterns for the same
+  domain to a :class:`~.URLMatcher` no longer creates multiple identical
+  :class:`~.matcher.PatternsMatcher` instances.
+* CI improvements.
+
 0.3.0 (2023-09-21)
 ------------------
 
@@ -12,7 +23,7 @@ Changelog
 0.2.0 (2022-02-01)
 ------------------
 
-* Update ``Patterns`` to be **frozen** so instances can easily be deduped based
+* Update :class:`~.Patterns` to be **frozen** so instances can easily be deduped based
   on its hash uniqueness.
 * Remove Python 3.6 support
 

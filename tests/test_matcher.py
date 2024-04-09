@@ -161,3 +161,16 @@ def test_match_all():
     assert list(matcher.match_all("http://example.com/products")) == [1]
     assert list(matcher.match_all("http://foo.example.com/products")) == [2, 1]
     assert list(matcher.match_all("http://bar.example.com/products")) == [3, 4, 1]
+
+
+def test_include_universal():
+    matcher = URLMatcher()
+    matcher.add_or_update(1, Patterns(include=["example.com"]))
+    matcher.add_or_update(2, Patterns(include=[]))
+    matcher.add_or_update(3, Patterns(include=["foo.example.com"]))
+    assert list(matcher.match_all("http://example.com")) == [1, 2]
+    assert list(matcher.match_all("http://example.com", include_universal=False)) == [1]
+    assert list(matcher.match_all("http://foo.example.com")) == [3, 1, 2]
+    assert list(matcher.match_all("http://foo.example.com", include_universal=False)) == [3, 1]
+    assert list(matcher.match_all("http://example.net")) == [2]
+    assert list(matcher.match_all("http://example.net", include_universal=False)) == [2]

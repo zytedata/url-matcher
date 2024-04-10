@@ -168,9 +168,10 @@ def test_include_universal():
     matcher.add_or_update(1, Patterns(include=["example.com"]))
     matcher.add_or_update(2, Patterns(include=[]))
     matcher.add_or_update(3, Patterns(include=["foo.example.com"]))
-    assert list(matcher.match_all("http://example.com")) == [1, 2]
+    matcher.add_or_update(4, Patterns(include=[""]))
+    assert list(matcher.match_all("http://example.com")) == [1, 4, 2]
     assert list(matcher.match_all("http://example.com", include_universal=False)) == [1]
-    assert list(matcher.match_all("http://foo.example.com")) == [3, 1, 2]
+    assert list(matcher.match_all("http://foo.example.com")) == [3, 1, 4, 2]
     assert list(matcher.match_all("http://foo.example.com", include_universal=False)) == [3, 1]
-    assert list(matcher.match_all("http://example.net")) == [2]
-    assert list(matcher.match_all("http://example.net", include_universal=False)) == [2]
+    assert list(matcher.match_all("http://example.net")) == [4, 2]
+    assert list(matcher.match_all("http://example.net", include_universal=False)) == [4, 2]

@@ -74,6 +74,7 @@ def test_matcher_add_remove_get():
     matcher.add_or_update(1, patterns)
     assert matcher.match("http://example.com") == 1
     assert matcher.get(1) is patterns
+    assert list(matcher.match_universal()) == []
 
     patterns_3 = Patterns(["example.com/articles"])
     matcher.add_or_update(3, patterns_3)
@@ -93,12 +94,14 @@ def test_matcher_add_remove_get():
     assert matcher.match("http://example.com") == 2
     assert matcher.match("http://example.com/products") == 1
     assert matcher.get(2) is univ_patterns
+    assert list(matcher.match_universal()) == [2]
 
     # Removing a universal pattern
     matcher.remove(2)
     assert matcher.match("http://example.com") is None
     assert matcher.match("http://example.com/products") == 1
     assert matcher.get(2) is None
+    assert list(matcher.match_universal()) == []
 
     # Removing regular patterns
     matcher.remove(3)

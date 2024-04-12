@@ -74,6 +74,7 @@ def test_matcher_add_remove_get():
     matcher.add_or_update(1, patterns)
     assert matcher.match("http://example.com") == 1
     assert matcher.get(1) is patterns
+    assert list(matcher.match_universal()) == []
 
     patterns_3 = Patterns(["example.com/articles"])
     matcher.add_or_update(3, patterns_3)
@@ -93,12 +94,14 @@ def test_matcher_add_remove_get():
     assert matcher.match("http://example.com") == 2
     assert matcher.match("http://example.com/products") == 1
     assert matcher.get(2) is univ_patterns
+    assert list(matcher.match_universal()) == [2]
 
     # Removing a universal pattern
     matcher.remove(2)
     assert matcher.match("http://example.com") is None
     assert matcher.match("http://example.com/products") == 1
     assert matcher.get(2) is None
+    assert list(matcher.match_universal()) == []
 
     # Removing regular patterns
     matcher.remove(3)
@@ -161,3 +164,26 @@ def test_match_all():
     assert list(matcher.match_all("http://example.com/products")) == [1]
     assert list(matcher.match_all("http://foo.example.com/products")) == [2, 1]
     assert list(matcher.match_all("http://bar.example.com/products")) == [3, 4, 1]
+
+
+def test_match_all_include_universal():
+    matcher = URLMatcher()
+    matcher.add_or_update(1, Patterns(include=["example.com"]))
+    matcher.add_or_update(2, Patterns(include=[]))
+    matcher.add_or_update(3, Patterns(include=["foo.example.com"]))
+    matcher.add_or_update(4, Patterns(include=[""]))
+    assert list(matcher.match_all("http://example.com")) == [1, 4, 2]
+    assert list(matcher.match_all("http://example.com", include_universal=False)) == [1]
+    assert list(matcher.match_all("http://foo.example.com")) == [3, 1, 4, 2]
+    assert list(matcher.match_all("http://foo.example.com", include_universal=False)) == [3, 1]
+    assert list(matcher.match_all("http://example.net")) == [4, 2]
+    assert list(matcher.match_all("http://example.net", include_universal=False)) == []
+
+
+def test_match_universal():
+    matcher = URLMatcher()
+    matcher.add_or_update(1, Patterns(include=["example.com"]))
+    matcher.add_or_update(2, Patterns(include=[]))
+    matcher.add_or_update(3, Patterns(include=["foo.example.com"]))
+    matcher.add_or_update(4, Patterns(include=[""]))
+    assert list(matcher.match_universal()) == [4, 2]

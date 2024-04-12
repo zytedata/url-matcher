@@ -107,6 +107,7 @@ class URLMatcher:
                      initialize the object from
         """
         self.matchers_by_domain: Dict[str, List[PatternsMatcher]] = {}
+        self.matchers_universal: List[PatternsMatcher] = []
         self.patterns: Dict[Any, Patterns] = {}
 
         if data:
@@ -151,14 +152,20 @@ class URLMatcher:
     def get(self, identifier: Any) -> Optional[Patterns]:
         return self.patterns.get(identifier)
 
-    def match(self, url: str) -> Optional[Any]:
-        return next(self.match_all(url), None)
+    def match(self, url: str, *, include_universal=True) -> Optional[Any]:
+        return next(self.match_all(url, include_universal=include_universal), None)
 
-    def match_all(self, url: str) -> Iterator[Any]:
+    def match_all(self, url: str, *, include_universal=True) -> Iterator[Any]:
         domain = get_domain(url)
-        for matcher in chain(self.matchers_by_domain.get(domain) or [], self.matchers_by_domain.get("") or []):
+        matchers: Iterable[PatternsMatcher] = self.matchers_by_domain.get(domain) or []
+        if include_universal:
+            matchers = chain(matchers, self.matchers_universal)
+        for matcher in matchers:
             if matcher.match(url):
                 yield matcher.identifier
+
+    def match_universal(self) -> Iterator[Any]:
+        return (m.identifier for m in self.matchers_universal)
 
     def _sort_domain(self, domain: str):
         """
@@ -179,6 +186,7 @@ class URLMatcher:
             return (matcher.patterns.priority, sorted_includes, matcher.identifier)
 
         self.matchers_by_domain[domain].sort(key=sort_key, reverse=True)
+        self.matchers_universal.sort(key=sort_key, reverse=True)
 
     def _del_matcher(self, domain: str, identifier: Any):
         matchers = self.matchers_by_domain[domain]
@@ -188,10 +196,16 @@ class URLMatcher:
                 break
         if not matchers:
             del self.matchers_by_domain[domain]
+        for idx in range(len(self.matchers_universal)):
+            if self.matchers_universal[idx].identifier == identifier:
+                del self.matchers_universal[idx]
+                break
 
     def _add_matcher(self, domain: str, matcher: PatternsMatcher):
         # FIXME: This can be made much more efficient if we insert the data directly in order instead of resorting.
         # The bisect module could be used for this purpose.
         # I'm leaving it for the future as insertion time is not critical.
         self.matchers_by_domain.setdefault(domain, []).append(matcher)
+        if domain == "":
+            self.matchers_universal.append(matcher)
         self._sort_domain(domain)

@@ -2,6 +2,16 @@
 Changelog
 =========
 
+0.5.0 (YYYY-MM-DD)
+------------------
+
+* Added the ``include_universal`` argument to :meth:`.URLMatcher.match` and
+  :meth:`.URLMatcher.match_all`. It can be set to ``False`` to skip universal
+  matchers.
+* Added the :meth:`.URLMatcher.match_universal` method that returns only
+  identifiers of universal matchers.
+* Added ``.readthedocs.yml``.
+
 0.4.0 (2024-04-03)
 ------------------
 

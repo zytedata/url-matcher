@@ -2,7 +2,7 @@
 Changelog
 =========
 
-0.5.0 (YYYY-MM-DD)
+0.5.0 (2024-04-15)
 ------------------
 
 * Added the ``include_universal`` argument to :meth:`.URLMatcher.match` and

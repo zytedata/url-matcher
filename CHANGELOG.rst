@@ -10,7 +10,7 @@ Changelog
   matchers.
 * Added the :meth:`.URLMatcher.match_universal` method that returns only
   identifiers of universal matchers.
-* Added .readthedocs.yml.
+* Added ``.readthedocs.yml``.
 
 0.4.0 (2024-04-03)
 ------------------

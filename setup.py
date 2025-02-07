@@ -27,6 +27,10 @@ setup(
             "tests",
         ]
     ),
+    package_data={
+        "url_matcher": ["py.typed"],
+    },
+    include_package_data=True,
     python_requires=">=3.9",
     install_requires=[
         "tldextract>=1.2",

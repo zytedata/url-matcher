@@ -148,7 +148,7 @@ def test_patterns_immutability():
     p = Patterns(["example.com"])
 
     with pytest.raises(AttributeError):
-        p.priority = 1
+        p.priority = 1  # type: ignore[misc]
 
 
 def test_match_all():

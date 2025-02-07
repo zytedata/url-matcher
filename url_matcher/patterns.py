@@ -137,7 +137,7 @@ def normalize_netloc_and_schema(schema: str, netloc: str) -> tuple[str, str]:
         return schema, netloc
 
 
-def hierarchical_str(pattern: str):
+def hierarchical_str(pattern: str) -> str:
     """
     Rewrites the given pattern in a string that is useful to sort patterns from more general to more concrete.
     For example, the pattern "example.com" is more general than "blog.example.com" which is more general than
@@ -187,13 +187,13 @@ class PatternMatcher:
         self.pattern = pattern
         self.parsed = pattern_parse(pattern)
         self.domain = get_pattern_domain(pattern)
-        self.netloc_re: Pattern | None = None
-        self.path_re: Pattern | None = None
-        self.fragment_re: Pattern | None = None
-        self.query_re_dict: dict[str, Pattern] | None = None
+        self.netloc_re: Pattern[str] | None = None
+        self.path_re: Pattern[str] | None = None
+        self.fragment_re: Pattern[str] | None = None
+        self.query_re_dict: dict[str, Pattern[str]] | None = None
         self._build_regexes()
 
-    def _build_regexes(self):
+    def _build_regexes(self) -> None:
         """
         Builds the compiled regexes that can be used to match the pattern.
         """
@@ -256,7 +256,7 @@ class PatternMatcher:
         return True
 
     @staticmethod
-    def _path_or_fragment_re(path_or_fragment: str) -> Pattern:
+    def _path_or_fragment_re(path_or_fragment: str) -> Pattern[str]:
         """Wildcard expansion + end of line character"""
         re_str = _wildcard_re_escape(path_or_fragment)
         if re_str.endswith(r"\|"):

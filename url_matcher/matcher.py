@@ -66,7 +66,7 @@ class PatternsMatcher:
     include_matchers: list[PatternMatcher] = field(init=False)
     exclude_matchers: list[PatternMatcher] = field(init=False)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.include_matchers = [PatternMatcher(pattern) for pattern in self.patterns.include]
         self.exclude_matchers = [PatternMatcher(pattern) for pattern in self.patterns.exclude]
 
@@ -84,7 +84,7 @@ class PatternsMatcher:
 
 
 class IncludePatternsWithoutDomainError(ValueError):
-    def __init__(self, *args, identifier: Any, patterns: Patterns, wrong_patterns: list[str]):
+    def __init__(self, *args: Any, identifier: Any, patterns: Patterns, wrong_patterns: list[str]):
         super().__init__(*args)
         self.id = identifier
         self.patterns = patterns
@@ -118,7 +118,7 @@ class URLMatcher:
             for identifier, patterns in items:
                 self.add_or_update(identifier, patterns)
 
-    def add_or_update(self, identifier: Any, patterns: Patterns):
+    def add_or_update(self, identifier: Any, patterns: Patterns) -> None:
         if not patterns.all_includes_have_domain() and not patterns.is_universal_pattern():
             wrong_patterns = [p for p in patterns.get_includes_without_domain() if p]
             raise IncludePatternsWithoutDomainError(
@@ -142,7 +142,7 @@ class URLMatcher:
         if patterns.is_universal_pattern():
             self._add_matcher("", matcher)
 
-    def remove(self, identifier: Any):
+    def remove(self, identifier: Any) -> None:
         patterns = self.patterns.get(identifier)
         if not patterns:
             return
@@ -155,10 +155,10 @@ class URLMatcher:
     def get(self, identifier: Any) -> Patterns | None:
         return self.patterns.get(identifier)
 
-    def match(self, url: str, *, include_universal=True) -> Any | None:
+    def match(self, url: str, *, include_universal: bool = True) -> Any | None:
         return next(self.match_all(url, include_universal=include_universal), None)
 
-    def match_all(self, url: str, *, include_universal=True) -> Iterator[Any]:
+    def match_all(self, url: str, *, include_universal: bool = True) -> Iterator[Any]:
         domain = get_domain(url)
         matchers: Iterable[PatternsMatcher] = self.matchers_by_domain.get(domain) or []
         if include_universal:
@@ -170,7 +170,7 @@ class URLMatcher:
     def match_universal(self) -> Iterator[Any]:
         return (m.identifier for m in self.matchers_universal)
 
-    def _sort_domain(self, domain: str):
+    def _sort_domain(self, domain: str) -> None:
         """
         Sort all the rules within a domain so that the matching can be done in sequence:
         the first rule matching wins.
@@ -184,14 +184,14 @@ class URLMatcher:
           * Rule identifier (descending)
         """
 
-        def sort_key(matcher: PatternsMatcher) -> tuple:
+        def sort_key(matcher: PatternsMatcher) -> tuple[int, list[str], Any]:
             sorted_includes = sorted(map(hierarchical_str, matcher.patterns.get_includes_for(domain)))
             return (matcher.patterns.priority, sorted_includes, matcher.identifier)
 
         self.matchers_by_domain[domain].sort(key=sort_key, reverse=True)
         self.matchers_universal.sort(key=sort_key, reverse=True)
 
-    def _del_matcher(self, domain: str, identifier: Any):
+    def _del_matcher(self, domain: str, identifier: Any) -> None:
         matchers = self.matchers_by_domain[domain]
         for idx in range(len(matchers)):
             if matchers[idx].identifier == identifier:
@@ -204,7 +204,7 @@ class URLMatcher:
                 del self.matchers_universal[idx]
                 break
 
-    def _add_matcher(self, domain: str, matcher: PatternsMatcher):
+    def _add_matcher(self, domain: str, matcher: PatternsMatcher) -> None:
         # FIXME: This can be made much more efficient if we insert the data directly in order instead of resorting.
         # The bisect module could be used for this purpose.
         # I'm leaving it for the future as insertion time is not critical.

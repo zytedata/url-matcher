@@ -2,18 +2,20 @@
 Utilities to parse patterns and match URLs using them.
 """
 
+from __future__ import annotations
+
 import ipaddress
 import re
 import warnings
 from collections import namedtuple
 from functools import lru_cache
-from typing import Dict, Optional, Pattern, Tuple
+from re import Pattern
 from urllib.parse import parse_qs, urlparse
 
 from url_matcher.util import get_domain
 
 
-def get_pattern_domain(pattern: str) -> Optional[str]:
+def get_pattern_domain(pattern: str) -> str | None:
     """
     Returns the domain of the pattern if any.
 
@@ -110,7 +112,7 @@ def _join_path_and_params(path: str, params: str) -> str:
         return path
 
 
-def normalize_netloc_and_schema(schema: str, netloc: str) -> Tuple[str, str]:
+def normalize_netloc_and_schema(schema: str, netloc: str) -> tuple[str, str]:
     """
     Removes 80 or 443 port when obvious. Deduces http or https when the port is provided
 
@@ -164,7 +166,7 @@ def hierarchical_str(pattern: str):
     return "".join((netloc, *parsed[2:]))
 
 
-def split_domain_port(netloc: str) -> Tuple[str, Optional[str]]:
+def split_domain_port(netloc: str) -> tuple[str, str | None]:
     """
     Splits the netloc into domain and port.
 
@@ -185,10 +187,10 @@ class PatternMatcher:
         self.pattern = pattern
         self.parsed = pattern_parse(pattern)
         self.domain = get_pattern_domain(pattern)
-        self.netloc_re: Optional[Pattern] = None
-        self.path_re: Optional[Pattern] = None
-        self.fragment_re: Optional[Pattern] = None
-        self.query_re_dict: Optional[Dict[str, Pattern]] = None
+        self.netloc_re: Pattern | None = None
+        self.path_re: Pattern | None = None
+        self.fragment_re: Pattern | None = None
+        self.query_re_dict: dict[str, Pattern] | None = None
         self._build_regexes()
 
     def _build_regexes(self):

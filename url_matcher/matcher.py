@@ -2,9 +2,12 @@
 The matcher module contains the UrlMatcher class.
 """
 
+from __future__ import annotations
+
+from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import dataclass, field
 from itertools import chain
-from typing import Any, Dict, Iterable, Iterator, List, Mapping, Optional, Tuple, Union
+from typing import Any
 
 from url_matcher.patterns import PatternMatcher, get_pattern_domain, hierarchical_str
 from url_matcher.util import get_domain
@@ -12,11 +15,11 @@ from url_matcher.util import get_domain
 
 @dataclass(init=False, frozen=True)
 class Patterns:
-    include: Tuple[str, ...]
-    exclude: Tuple[str, ...]
+    include: tuple[str, ...]
+    exclude: tuple[str, ...]
     priority: int
 
-    def __init__(self, include: List[str], exclude: Optional[List[str]] = None, priority: int = 500):
+    def __init__(self, include: list[str], exclude: list[str] | None = None, priority: int = 500):
         # The initialization is manually set so that we can support an API of
         # accepting and returning lists. However, tuples are being used underneath
         # that class so that the attributes are truly immutable, in addition to
@@ -33,12 +36,12 @@ class Patterns:
         object.__setattr__(self, "exclude", tuple(exclude or []))
         object.__setattr__(self, "priority", priority)
 
-    def get_domains(self) -> List[str]:
+    def get_domains(self) -> list[str]:
         domains = [get_pattern_domain(pattern) for pattern in self.include]
         # remove duplicate domains preserving the order
         return list(dict.fromkeys(domain for domain in domains if domain))
 
-    def get_includes_without_domain(self) -> List[str]:
+    def get_includes_without_domain(self) -> list[str]:
         return [pattern for pattern in self.include if get_pattern_domain(pattern) is None]
 
     def all_includes_have_domain(self) -> bool:
@@ -52,7 +55,7 @@ class Patterns:
                 return False
         return True
 
-    def get_includes_for(self, domain: str) -> List[str]:
+    def get_includes_for(self, domain: str) -> list[str]:
         return [pattern for pattern in self.include if get_pattern_domain(pattern) == domain]
 
 
@@ -60,8 +63,8 @@ class Patterns:
 class PatternsMatcher:
     identifier: Any
     patterns: Patterns
-    include_matchers: List[PatternMatcher] = field(init=False)
-    exclude_matchers: List[PatternMatcher] = field(init=False)
+    include_matchers: list[PatternMatcher] = field(init=False)
+    exclude_matchers: list[PatternMatcher] = field(init=False)
 
     def __post_init__(self):
         self.include_matchers = [PatternMatcher(pattern) for pattern in self.patterns.include]
@@ -81,7 +84,7 @@ class PatternsMatcher:
 
 
 class IncludePatternsWithoutDomainError(ValueError):
-    def __init__(self, *args, identifier: Any, patterns: Patterns, wrong_patterns: List[str]):
+    def __init__(self, *args, identifier: Any, patterns: Patterns, wrong_patterns: list[str]):
         super().__init__(*args)
         self.id = identifier
         self.patterns = patterns
@@ -89,7 +92,7 @@ class IncludePatternsWithoutDomainError(ValueError):
 
 
 class URLMatcher:
-    def __init__(self, data: Union[Mapping[Any, Patterns], Iterable[Tuple[Any, Patterns]], None] = None):
+    def __init__(self, data: Mapping[Any, Patterns] | Iterable[tuple[Any, Patterns]] | None = None):
         """
         A class that matches URLs against a list of patterns, returning
         the identifier of the rule that matched the URL.
@@ -106,9 +109,9 @@ class URLMatcher:
         :param data: A map or a list of tuples with identifier, patterns pairs to
                      initialize the object from
         """
-        self.matchers_by_domain: Dict[str, List[PatternsMatcher]] = {}
-        self.matchers_universal: List[PatternsMatcher] = []
-        self.patterns: Dict[Any, Patterns] = {}
+        self.matchers_by_domain: dict[str, list[PatternsMatcher]] = {}
+        self.matchers_universal: list[PatternsMatcher] = []
+        self.patterns: dict[Any, Patterns] = {}
 
         if data:
             items = data.items() if isinstance(data, Mapping) else data
@@ -149,10 +152,10 @@ class URLMatcher:
         if patterns.is_universal_pattern():
             self._del_matcher("", identifier)
 
-    def get(self, identifier: Any) -> Optional[Patterns]:
+    def get(self, identifier: Any) -> Patterns | None:
         return self.patterns.get(identifier)
 
-    def match(self, url: str, *, include_universal=True) -> Optional[Any]:
+    def match(self, url: str, *, include_universal=True) -> Any | None:
         return next(self.match_all(url, include_universal=include_universal), None)
 
     def match_all(self, url: str, *, include_universal=True) -> Iterator[Any]:
@@ -181,7 +184,7 @@ class URLMatcher:
           * Rule identifier (descending)
         """
 
-        def sort_key(matcher: PatternsMatcher) -> Tuple:
+        def sort_key(matcher: PatternsMatcher) -> tuple:
             sorted_includes = sorted(map(hierarchical_str, matcher.patterns.get_includes_for(domain)))
             return (matcher.patterns.priority, sorted_includes, matcher.identifier)
 

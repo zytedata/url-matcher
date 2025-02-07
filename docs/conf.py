@@ -12,7 +12,6 @@
 #
 import os
 import sys
-from typing import Dict
 
 sys.path.insert(0, os.path.abspath("../"))
 
@@ -55,7 +54,7 @@ templates_path = ["_templates"]
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = source_suffix = {".rst": "restructuredtext"}
+source_suffix = {".rst": "restructuredtext"}
 
 # The master toctree document.
 master_doc = "index"
@@ -113,7 +112,7 @@ htmlhelp_basename = "url-matcher-doc"
 
 # -- Options for LaTeX output ------------------------------------------------
 
-latex_elements: Dict = {
+latex_elements: dict = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     # 'papersize': 'letterpaper',

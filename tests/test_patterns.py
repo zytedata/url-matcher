@@ -9,7 +9,7 @@ CORNER_CASES_FIXTURE = load_json_fixture("single_patterns_corner_cases")
 
 
 @pytest.mark.parametrize(
-    "pattern,match,no_match",
+    ("pattern", "match", "no_match"),
     [(row["pattern"], row["match"], row["no_match"]) for row in PATTERNS_FIXTURE],
     ids=[row["description"] for row in PATTERNS_FIXTURE],
 )
@@ -22,7 +22,7 @@ def test_single_patterns(pattern, match, no_match):
 
 
 @pytest.mark.parametrize(
-    "pattern,match,no_match",
+    ("pattern", "match", "no_match"),
     [(row["pattern"], row["match"], row["no_match"]) for row in CORNER_CASES_FIXTURE],
     ids=[row["description"] for row in CORNER_CASES_FIXTURE],
 )

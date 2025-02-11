@@ -1,3 +1,3 @@
-__all__ = ["URLMatcher", "Patterns"]
+__all__ = ["Patterns", "URLMatcher"]
 
 from .matcher import Patterns, URLMatcher

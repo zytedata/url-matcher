@@ -7,9 +7,9 @@ from __future__ import annotations
 import ipaddress
 import re
 import warnings
-from collections import namedtuple
 from functools import lru_cache
 from re import Pattern
+from typing import NamedTuple
 from urllib.parse import parse_qs, urlparse
 
 from url_matcher.util import get_domain
@@ -68,7 +68,12 @@ def pattern_to_url(pattern: str) -> str:
     return pattern
 
 
-ParseTuple = namedtuple("ParseTuple", "scheme netloc path query fragment")
+class ParseTuple(NamedTuple):
+    scheme: str
+    netloc: str
+    path: str
+    query: str
+    fragment: str
 
 
 @lru_cache(30)
@@ -108,8 +113,7 @@ def _wildcard_re_escape(text: str) -> str:
 def _join_path_and_params(path: str, params: str) -> str:
     if params:
         return f"{path};{params}"
-    else:
-        return path
+    return path
 
 
 def normalize_netloc_and_schema(schema: str, netloc: str) -> tuple[str, str]:
@@ -133,8 +137,7 @@ def normalize_netloc_and_schema(schema: str, netloc: str) -> tuple[str, str]:
     domain, port = split_domain_port(netloc)
     if (port == "80" and schema in ("http", "")) or (port == "443" and schema in ("https", "")):
         return "http" if port == "80" else "https", domain
-    else:
-        return schema, netloc
+    return schema, netloc
 
 
 def hierarchical_str(pattern: str) -> str:
@@ -213,14 +216,14 @@ class PatternMatcher:
             pkvs = parse_qs(pquery, keep_blank_values=True)
             query_re_dict = {}
             for pparam, values in pkvs.items():
-                pparam = pparam.lower()
+                pparam = pparam.lower()  # noqa: PLW2901
                 if "*" in pparam:
                     warnings.warn(
                         f"Wildcard expansion is only allowed for the values in the query parameter. Pattern: '{self.pattern}'",
                         SyntaxWarning,
                         stacklevel=3,
                     )
-                    pparam = pparam.replace("*", "")
+                    pparam = pparam.replace("*", "")  # noqa: PLW2901
                 if not pparam:
                     continue
                 param_re = rf"^(?:{'|'.join([_wildcard_re_escape(value) for value in values])})$"
@@ -232,18 +235,14 @@ class PatternMatcher:
         Return True if the url matches the pattern.
         """
         parsed = _urlparse(url)
-        if self.parsed.scheme:
-            if parsed.scheme != self.parsed.scheme:
-                return False
-        if self.netloc_re:
-            if not self.netloc_re.match(parsed.netloc):
-                return False
-        if self.path_re:
-            if not self.path_re.match(parsed.path):
-                return False
-        if self.fragment_re:
-            if not self.fragment_re.match(parsed.fragment):
-                return False
+        if self.parsed.scheme and parsed.scheme != self.parsed.scheme:
+            return False
+        if self.netloc_re and not self.netloc_re.match(parsed.netloc):
+            return False
+        if self.path_re and not self.path_re.match(parsed.path):
+            return False
+        if self.fragment_re and not self.fragment_re.match(parsed.fragment):
+            return False
         if self.query_re_dict:
             kvs = parse_qs(parsed.query, keep_blank_values=True)
             kvs = {k.lower(): v for k, v in kvs.items()}

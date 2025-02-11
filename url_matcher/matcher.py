@@ -50,10 +50,7 @@ class Patterns:
 
     def is_universal_pattern(self) -> bool:
         """Return true if there are no include patterns or they are empty. A universal pattern matches any domain"""
-        for pattern in self.include:
-            if pattern:
-                return False
-        return True
+        return not any(pattern for pattern in self.include)
 
     def get_includes_for(self, domain: str) -> list[str]:
         return [pattern for pattern in self.include if get_pattern_domain(pattern) == domain]
@@ -77,10 +74,7 @@ class PatternsMatcher:
                     break
             else:
                 return False
-        for exclude in self.exclude_matchers:
-            if exclude.match(url):
-                return False
-        return True
+        return not any(exclude.match(url) for exclude in self.exclude_matchers)
 
 
 class IncludePatternsWithoutDomainError(ValueError):

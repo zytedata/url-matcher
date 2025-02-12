@@ -2,6 +2,8 @@
 Example of usage of the URLMatcher library
 """
 
+from __future__ import annotations
+
 import dataclasses
 import random
 import time
@@ -64,7 +66,7 @@ assert matcher.match("http://priority.com") == "low priority"
 # urls for these domains.
 
 
-def add_patterns(domain):
+def add_patterns(domain: int) -> None:
     patterns = Patterns(include=[f"{domain}/catalogue/?param=book"], exclude=["/catalogue/category/"])
     matcher.add_or_update(f"{domain} product", patterns)
 
@@ -93,7 +95,7 @@ for _ in range(N_URLS):
 
 # Let's try to match the urls
 start = time.perf_counter()
-counter: Counter = Counter()
+counter: Counter[bool] = Counter()
 for domain, url in urls:
     match = matcher.match(url)
     counter[bool(match)] += 1

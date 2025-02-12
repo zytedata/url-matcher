@@ -10,13 +10,12 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
 import sys
-from typing import Dict
+from pathlib import Path
 
-sys.path.insert(0, os.path.abspath("../"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from url_matcher import __version__  # noqa: E402
+from url_matcher import __version__
 
 # -- Project information -----------------------------------------------------
 
@@ -55,7 +54,7 @@ templates_path = ["_templates"]
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = source_suffix = {".rst": "restructuredtext"}
+source_suffix = {".rst": "restructuredtext"}
 
 # The master toctree document.
 master_doc = "index"
@@ -113,7 +112,7 @@ htmlhelp_basename = "url-matcher-doc"
 
 # -- Options for LaTeX output ------------------------------------------------
 
-latex_elements: Dict = {
+latex_elements: dict = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     # 'papersize': 'letterpaper',

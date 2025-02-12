@@ -2,9 +2,12 @@
 The matcher module contains the UrlMatcher class.
 """
 
+from __future__ import annotations
+
+from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import dataclass, field
 from itertools import chain
-from typing import Any, Dict, Iterable, Iterator, List, Mapping, Optional, Tuple, Union
+from typing import Any
 
 from url_matcher.patterns import PatternMatcher, get_pattern_domain, hierarchical_str
 from url_matcher.util import get_domain
@@ -12,11 +15,11 @@ from url_matcher.util import get_domain
 
 @dataclass(init=False, frozen=True)
 class Patterns:
-    include: Tuple[str, ...]
-    exclude: Tuple[str, ...]
+    include: tuple[str, ...]
+    exclude: tuple[str, ...]
     priority: int
 
-    def __init__(self, include: List[str], exclude: Optional[List[str]] = None, priority: int = 500):
+    def __init__(self, include: list[str], exclude: list[str] | None = None, priority: int = 500):
         # The initialization is manually set so that we can support an API of
         # accepting and returning lists. However, tuples are being used underneath
         # that class so that the attributes are truly immutable, in addition to
@@ -33,12 +36,12 @@ class Patterns:
         object.__setattr__(self, "exclude", tuple(exclude or []))
         object.__setattr__(self, "priority", priority)
 
-    def get_domains(self) -> List[str]:
+    def get_domains(self) -> list[str]:
         domains = [get_pattern_domain(pattern) for pattern in self.include]
         # remove duplicate domains preserving the order
         return list(dict.fromkeys(domain for domain in domains if domain))
 
-    def get_includes_without_domain(self) -> List[str]:
+    def get_includes_without_domain(self) -> list[str]:
         return [pattern for pattern in self.include if get_pattern_domain(pattern) is None]
 
     def all_includes_have_domain(self) -> bool:
@@ -47,12 +50,9 @@ class Patterns:
 
     def is_universal_pattern(self) -> bool:
         """Return true if there are no include patterns or they are empty. A universal pattern matches any domain"""
-        for pattern in self.include:
-            if pattern:
-                return False
-        return True
+        return not any(pattern for pattern in self.include)
 
-    def get_includes_for(self, domain: str) -> List[str]:
+    def get_includes_for(self, domain: str) -> list[str]:
         return [pattern for pattern in self.include if get_pattern_domain(pattern) == domain]
 
 
@@ -60,10 +60,10 @@ class Patterns:
 class PatternsMatcher:
     identifier: Any
     patterns: Patterns
-    include_matchers: List[PatternMatcher] = field(init=False)
-    exclude_matchers: List[PatternMatcher] = field(init=False)
+    include_matchers: list[PatternMatcher] = field(init=False)
+    exclude_matchers: list[PatternMatcher] = field(init=False)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.include_matchers = [PatternMatcher(pattern) for pattern in self.patterns.include]
         self.exclude_matchers = [PatternMatcher(pattern) for pattern in self.patterns.exclude]
 
@@ -74,14 +74,11 @@ class PatternsMatcher:
                     break
             else:
                 return False
-        for exclude in self.exclude_matchers:
-            if exclude.match(url):
-                return False
-        return True
+        return not any(exclude.match(url) for exclude in self.exclude_matchers)
 
 
 class IncludePatternsWithoutDomainError(ValueError):
-    def __init__(self, *args, identifier: Any, patterns: Patterns, wrong_patterns: List[str]):
+    def __init__(self, *args: Any, identifier: Any, patterns: Patterns, wrong_patterns: list[str]):
         super().__init__(*args)
         self.id = identifier
         self.patterns = patterns
@@ -89,7 +86,7 @@ class IncludePatternsWithoutDomainError(ValueError):
 
 
 class URLMatcher:
-    def __init__(self, data: Union[Mapping[Any, Patterns], Iterable[Tuple[Any, Patterns]], None] = None):
+    def __init__(self, data: Mapping[Any, Patterns] | Iterable[tuple[Any, Patterns]] | None = None):
         """
         A class that matches URLs against a list of patterns, returning
         the identifier of the rule that matched the URL.
@@ -106,16 +103,16 @@ class URLMatcher:
         :param data: A map or a list of tuples with identifier, patterns pairs to
                      initialize the object from
         """
-        self.matchers_by_domain: Dict[str, List[PatternsMatcher]] = {}
-        self.matchers_universal: List[PatternsMatcher] = []
-        self.patterns: Dict[Any, Patterns] = {}
+        self.matchers_by_domain: dict[str, list[PatternsMatcher]] = {}
+        self.matchers_universal: list[PatternsMatcher] = []
+        self.patterns: dict[Any, Patterns] = {}
 
         if data:
             items = data.items() if isinstance(data, Mapping) else data
             for identifier, patterns in items:
                 self.add_or_update(identifier, patterns)
 
-    def add_or_update(self, identifier: Any, patterns: Patterns):
+    def add_or_update(self, identifier: Any, patterns: Patterns) -> None:
         if not patterns.all_includes_have_domain() and not patterns.is_universal_pattern():
             wrong_patterns = [p for p in patterns.get_includes_without_domain() if p]
             raise IncludePatternsWithoutDomainError(
@@ -139,7 +136,7 @@ class URLMatcher:
         if patterns.is_universal_pattern():
             self._add_matcher("", matcher)
 
-    def remove(self, identifier: Any):
+    def remove(self, identifier: Any) -> None:
         patterns = self.patterns.get(identifier)
         if not patterns:
             return
@@ -149,13 +146,13 @@ class URLMatcher:
         if patterns.is_universal_pattern():
             self._del_matcher("", identifier)
 
-    def get(self, identifier: Any) -> Optional[Patterns]:
+    def get(self, identifier: Any) -> Patterns | None:
         return self.patterns.get(identifier)
 
-    def match(self, url: str, *, include_universal=True) -> Optional[Any]:
+    def match(self, url: str, *, include_universal: bool = True) -> Any | None:
         return next(self.match_all(url, include_universal=include_universal), None)
 
-    def match_all(self, url: str, *, include_universal=True) -> Iterator[Any]:
+    def match_all(self, url: str, *, include_universal: bool = True) -> Iterator[Any]:
         domain = get_domain(url)
         matchers: Iterable[PatternsMatcher] = self.matchers_by_domain.get(domain) or []
         if include_universal:
@@ -167,7 +164,7 @@ class URLMatcher:
     def match_universal(self) -> Iterator[Any]:
         return (m.identifier for m in self.matchers_universal)
 
-    def _sort_domain(self, domain: str):
+    def _sort_domain(self, domain: str) -> None:
         """
         Sort all the rules within a domain so that the matching can be done in sequence:
         the first rule matching wins.
@@ -181,14 +178,14 @@ class URLMatcher:
           * Rule identifier (descending)
         """
 
-        def sort_key(matcher: PatternsMatcher) -> Tuple:
+        def sort_key(matcher: PatternsMatcher) -> tuple[int, list[str], Any]:
             sorted_includes = sorted(map(hierarchical_str, matcher.patterns.get_includes_for(domain)))
             return (matcher.patterns.priority, sorted_includes, matcher.identifier)
 
         self.matchers_by_domain[domain].sort(key=sort_key, reverse=True)
         self.matchers_universal.sort(key=sort_key, reverse=True)
 
-    def _del_matcher(self, domain: str, identifier: Any):
+    def _del_matcher(self, domain: str, identifier: Any) -> None:
         matchers = self.matchers_by_domain[domain]
         for idx in range(len(matchers)):
             if matchers[idx].identifier == identifier:
@@ -201,7 +198,7 @@ class URLMatcher:
                 del self.matchers_universal[idx]
                 break
 
-    def _add_matcher(self, domain: str, matcher: PatternsMatcher):
+    def _add_matcher(self, domain: str, matcher: PatternsMatcher) -> None:
         # FIXME: This can be made much more efficient if we insert the data directly in order instead of resorting.
         # The bisect module could be used for this purpose.
         # I'm leaving it for the future as insertion time is not critical.

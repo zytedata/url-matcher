@@ -2,18 +2,20 @@
 Utilities to parse patterns and match URLs using them.
 """
 
+from __future__ import annotations
+
 import ipaddress
 import re
 import warnings
-from collections import namedtuple
 from functools import lru_cache
-from typing import Dict, Optional, Pattern, Tuple
+from re import Pattern
+from typing import NamedTuple
 from urllib.parse import parse_qs, urlparse
 
 from url_matcher.util import get_domain
 
 
-def get_pattern_domain(pattern: str) -> Optional[str]:
+def get_pattern_domain(pattern: str) -> str | None:
     """
     Returns the domain of the pattern if any.
 
@@ -66,7 +68,12 @@ def pattern_to_url(pattern: str) -> str:
     return pattern
 
 
-ParseTuple = namedtuple("ParseTuple", "scheme netloc path query fragment")
+class ParseTuple(NamedTuple):
+    scheme: str
+    netloc: str
+    path: str
+    query: str
+    fragment: str
 
 
 @lru_cache(30)
@@ -106,11 +113,10 @@ def _wildcard_re_escape(text: str) -> str:
 def _join_path_and_params(path: str, params: str) -> str:
     if params:
         return f"{path};{params}"
-    else:
-        return path
+    return path
 
 
-def normalize_netloc_and_schema(schema: str, netloc: str) -> Tuple[str, str]:
+def normalize_netloc_and_schema(schema: str, netloc: str) -> tuple[str, str]:
     """
     Removes 80 or 443 port when obvious. Deduces http or https when the port is provided
 
@@ -131,11 +137,10 @@ def normalize_netloc_and_schema(schema: str, netloc: str) -> Tuple[str, str]:
     domain, port = split_domain_port(netloc)
     if (port == "80" and schema in ("http", "")) or (port == "443" and schema in ("https", "")):
         return "http" if port == "80" else "https", domain
-    else:
-        return schema, netloc
+    return schema, netloc
 
 
-def hierarchical_str(pattern: str):
+def hierarchical_str(pattern: str) -> str:
     """
     Rewrites the given pattern in a string that is useful to sort patterns from more general to more concrete.
     For example, the pattern "example.com" is more general than "blog.example.com" which is more general than
@@ -164,7 +169,7 @@ def hierarchical_str(pattern: str):
     return "".join((netloc, *parsed[2:]))
 
 
-def split_domain_port(netloc: str) -> Tuple[str, Optional[str]]:
+def split_domain_port(netloc: str) -> tuple[str, str | None]:
     """
     Splits the netloc into domain and port.
 
@@ -185,13 +190,13 @@ class PatternMatcher:
         self.pattern = pattern
         self.parsed = pattern_parse(pattern)
         self.domain = get_pattern_domain(pattern)
-        self.netloc_re: Optional[Pattern] = None
-        self.path_re: Optional[Pattern] = None
-        self.fragment_re: Optional[Pattern] = None
-        self.query_re_dict: Optional[Dict[str, Pattern]] = None
+        self.netloc_re: Pattern[str] | None = None
+        self.path_re: Pattern[str] | None = None
+        self.fragment_re: Pattern[str] | None = None
+        self.query_re_dict: dict[str, Pattern[str]] | None = None
         self._build_regexes()
 
-    def _build_regexes(self):
+    def _build_regexes(self) -> None:
         """
         Builds the compiled regexes that can be used to match the pattern.
         """
@@ -211,14 +216,14 @@ class PatternMatcher:
             pkvs = parse_qs(pquery, keep_blank_values=True)
             query_re_dict = {}
             for pparam, values in pkvs.items():
-                pparam = pparam.lower()
+                pparam = pparam.lower()  # noqa: PLW2901
                 if "*" in pparam:
                     warnings.warn(
                         f"Wildcard expansion is only allowed for the values in the query parameter. Pattern: '{self.pattern}'",
                         SyntaxWarning,
                         stacklevel=3,
                     )
-                    pparam = pparam.replace("*", "")
+                    pparam = pparam.replace("*", "")  # noqa: PLW2901
                 if not pparam:
                     continue
                 param_re = rf"^(?:{'|'.join([_wildcard_re_escape(value) for value in values])})$"
@@ -230,18 +235,14 @@ class PatternMatcher:
         Return True if the url matches the pattern.
         """
         parsed = _urlparse(url)
-        if self.parsed.scheme:
-            if parsed.scheme != self.parsed.scheme:
-                return False
-        if self.netloc_re:
-            if not self.netloc_re.match(parsed.netloc):
-                return False
-        if self.path_re:
-            if not self.path_re.match(parsed.path):
-                return False
-        if self.fragment_re:
-            if not self.fragment_re.match(parsed.fragment):
-                return False
+        if self.parsed.scheme and parsed.scheme != self.parsed.scheme:
+            return False
+        if self.netloc_re and not self.netloc_re.match(parsed.netloc):
+            return False
+        if self.path_re and not self.path_re.match(parsed.path):
+            return False
+        if self.fragment_re and not self.fragment_re.match(parsed.fragment):
+            return False
         if self.query_re_dict:
             kvs = parse_qs(parsed.query, keep_blank_values=True)
             kvs = {k.lower(): v for k, v in kvs.items()}
@@ -254,7 +255,7 @@ class PatternMatcher:
         return True
 
     @staticmethod
-    def _path_or_fragment_re(path_or_fragment: str) -> Pattern:
+    def _path_or_fragment_re(path_or_fragment: str) -> Pattern[str]:
         """Wildcard expansion + end of line character"""
         re_str = _wildcard_re_escape(path_or_fragment)
         if re_str.endswith(r"\|"):

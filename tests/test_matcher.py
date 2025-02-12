@@ -11,7 +11,7 @@ RULES_FIXTURE = load_json_fixture("rules")
 
 
 @pytest.mark.parametrize(
-    "patterns,match,no_match",
+    ("patterns", "match", "no_match"),
     [(row["patterns"], row["match"], row["no_match"]) for row in PATTERNS_FIXTURE],
     ids=[row["description"] for row in PATTERNS_FIXTURE],
 )
@@ -27,7 +27,7 @@ def test_matcher_single_rule(patterns, match, no_match):
 
 
 @pytest.mark.parametrize(
-    "patterns,match,no_match",
+    ("patterns", "match", "no_match"),
     [(row["patterns"], row["match"], row["no_match"]) for row in CORNER_CASES_FIXTURE],
     ids=[row["description"] for row in CORNER_CASES_FIXTURE],
 )
@@ -43,7 +43,7 @@ def test_matcher_single_rule_corner_cases(patterns, match, no_match):
 
 
 @pytest.mark.parametrize(
-    "rules,cases",
+    ("rules", "cases"),
     [(row["rules"], row["cases"]) for row in RULES_FIXTURE],
     ids=[row["description"] for row in RULES_FIXTURE],
 )
@@ -132,7 +132,6 @@ def test_matcher_add_remove_get():
 
 
 def test_dedupe_unique_patterns():
-
     p = [
         Patterns(["example.com"]),
         Patterns(include=["example.com"], exclude=None, priority=500),
@@ -144,11 +143,10 @@ def test_dedupe_unique_patterns():
 
 
 def test_patterns_immutability():
-
     p = Patterns(["example.com"])
 
     with pytest.raises(AttributeError):
-        p.priority = 1
+        p.priority = 1  # type: ignore[misc]
 
 
 def test_match_all():

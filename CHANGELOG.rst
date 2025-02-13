@@ -2,6 +2,14 @@
 Changelog
 =========
 
+0.6.0 (YYYY-MM-DD)
+------------------
+
+* Dropped Python 3.7 support.
+* Added Python 3.13 support.
+* Improved type hints and added ``py.typed``.
+* CI improvements.
+
 0.5.0 (2024-04-15)
 ------------------
 

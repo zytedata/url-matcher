@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="url-matcher",
-    version="0.5.0",
+    version="0.6.0",
     description="URL matching rules library to connect URLs with resources",
     long_description=Path("README.rst").read_text(encoding="utf-8"),
     long_description_content_type="text/x-rst",

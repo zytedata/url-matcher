@@ -57,6 +57,9 @@ tag_name = "{new_version}"
 [[tool.bumpversion.files]]
 filename = "url_matcher/__version__.py"
 
+[tool.mypy]
+strict = true
+
 [[tool.mypy.overrides]]
 module = "tests.*"
 allow_untyped_defs = true

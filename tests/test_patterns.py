@@ -37,5 +37,5 @@ def test_single_patterns_corner_cases(pattern, match, no_match):
 def test_pattern_matcher_warning():
     with pytest.warns(SyntaxWarning):
         matcher = PatternMatcher("example.com/path?*_id=34")
-        assert matcher.match("http://example.com/path?_id=34")
-        assert not matcher.match("http://example.com/path?a_id=34")
+    assert matcher.match("http://example.com/path?_id=34")
+    assert not matcher.match("http://example.com/path?a_id=34")

@@ -200,7 +200,7 @@ class PatternMatcher:
         """
         Builds the compiled regexes that can be used to match the pattern.
         """
-        pscheme, pnetloc, ppath, pquery, pfragment = self.parsed
+        _, pnetloc, ppath, pquery, pfragment = self.parsed
         if pnetloc:
             netloc_re = re.escape(pnetloc)
             if not any((ppath, pquery, pfragment)):

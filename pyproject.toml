@@ -34,9 +34,6 @@ Tracker = "https://github.com/zytedata/url-matcher/issues"
 Documentation = "https://url-matcher.readthedocs.io/"
 "Release notes" = "https://url-matcher.readthedocs.io/en/stable/changelog.html"
 
-[tool.coverage.run]
-branch = true
-
 [tool.hatch.version]
 path = "url_matcher/__version__.py"
 
@@ -58,6 +55,9 @@ tag_name = "{new_version}"
 
 [[tool.bumpversion.files]]
 filename = "url_matcher/__version__.py"
+
+[tool.coverage.run]
+branch = true
 
 [tool.mypy]
 strict = true

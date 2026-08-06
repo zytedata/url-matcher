@@ -147,6 +147,8 @@ Fragment patterns
 It works exactly like the path.
 
 
+.. _conflict-resolution:
+
 Rules conflict resolution
 =========================
 
@@ -167,6 +169,10 @@ The full criteria applied to resolve a conflict between rules are:
   2. priority (the highest wins)
   3. specificity (the most specific include patterns for the concerning domain wins)
   4. the rule id (the rule with the highest id wins)
+
+Use :meth:`~url_matcher.URLMatcher.match_all` instead of
+:meth:`~url_matcher.URLMatcher.match` to get every matching rule, in that same
+order, rather than only the winner.
 
 Efficiency
 ==========

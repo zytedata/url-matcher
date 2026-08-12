@@ -20,7 +20,7 @@ from url_matcher import __version__
 # -- Project information -----------------------------------------------------
 
 project = "url-matcher"
-copyright = "2021, Zyte"
+project_copyright = "2021, Zyte"
 author = "Zyte"
 
 # The short X.Y version

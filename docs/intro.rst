@@ -66,9 +66,11 @@ This is an example of a rule using such a set of patterns:
 
 .. code-block:: python
 
-    patterns = Patterns(include=["example.com", "example.org"],
-                        exclude=["*.jpg|", "*.jpeg|"])
-    matcher.add_or_update("proxy_1", patterns))
+    patterns = Patterns(
+        include=["example.com", "example.org"],
+        exclude=["*.jpg|", "*.jpeg|"],
+    )
+    matcher.add_or_update("proxy_1", patterns)
 
 Patterns
 ========

@@ -49,10 +49,10 @@ def test_matcher_single_rule_corner_cases(patterns, match, no_match):
 )
 def test_matcher_rules(rules, cases):
     matcher = URLMatcher()
-    for id, patterns in rules:
-        matcher.add_or_update(id, Patterns(**patterns))
-    for url, id in cases:
-        assert matcher.match(url) == id
+    for id_, patterns in rules:
+        matcher.add_or_update(id_, Patterns(**patterns))
+    for url, id_ in cases:
+        assert matcher.match(url) == id_
 
 
 def test_matcher_init():

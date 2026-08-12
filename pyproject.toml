@@ -1,3 +1,52 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "url-matcher"
+dynamic = ["version"]
+description = "URL matching rules library to connect URLs with resources"
+readme = "README.rst"
+license = "Apache-2.0"
+requires-python = ">=3.10"
+authors = [
+    { name = "Zyte Group Ltd", email = "info@zyte.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "tldextract>=1.3.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/zytedata/url-matcher"
+Tracker = "https://github.com/zytedata/url-matcher/issues"
+Documentation = "https://url-matcher.readthedocs.io/"
+"Release notes" = "https://url-matcher.readthedocs.io/en/stable/changelog.html"
+
+[tool.hatch.version]
+path = "url_matcher/__version__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/docs",
+    "/tests",
+    "/url_matcher",
+    "/CHANGELOG.rst",
+    "/CONTRIBUTING.rst",
+    "/tox.ini",
+]
+
 [tool.bumpversion]
 current_version = "0.6.0"
 commit = true
@@ -5,10 +54,13 @@ tag = true
 tag_name = "{new_version}"
 
 [[tool.bumpversion.files]]
-filename = "setup.py"
-
-[[tool.bumpversion.files]]
 filename = "url_matcher/__version__.py"
+
+[tool.coverage.run]
+branch = true
+
+[tool.mypy]
+strict = true
 
 [[tool.mypy.overrides]]
 module = "tests.*"
@@ -20,10 +72,16 @@ line-length = 120
 
 [tool.ruff.lint]
 extend-select = [
+    # flake8-builtins
+    "A",
+    # flake8-async
+    "ASYNC",
     # flake8-bugbear
     "B",
     # flake8-comprehensions
     "C4",
+    # flake8-commas
+    "COM",
     # pydocstyle
     "D",
     # flake8-future-annotations
@@ -70,6 +128,8 @@ extend-select = [
     "T10",
     # flake8-type-checking
     "TC",
+    # flake8-tidy-imports
+    "TID",
     # pyupgrade
     "UP",
     # pycodestyle warnings
@@ -78,6 +138,8 @@ extend-select = [
     "YTT",
 ]
 ignore = [
+    # Trailing comma missing
+    "COM812",
     # Missing docstring in public module
     "D100",
     # Missing docstring in public class
@@ -127,6 +189,9 @@ ignore = [
     # Use of `assert` detected
     "S101",
 ]
+
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
 
 [tool.ruff.lint.per-file-ignores]
 "url_matcher/__init__.py" = ["F401", "F403"]

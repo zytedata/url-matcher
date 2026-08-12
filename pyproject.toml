@@ -17,7 +17,6 @@ check_untyped_defs = true
 
 [tool.ruff]
 line-length = 120
-target-version = "py310"
 
 [tool.ruff.lint]
 extend-select = [

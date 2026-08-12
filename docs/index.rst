@@ -6,7 +6,7 @@ URL matching library that relates URLs with resources. Rules are defined using
 simple pattern definitions. It is simpler and faster than using regular expressions
 if the rules involves many domains.
 
-:ref:`license` is BSD 3-clause.
+:ref:`license` is Apache 2.0.
 
 .. toctree::
    :caption: Getting started

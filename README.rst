@@ -46,7 +46,7 @@ how they behave:
 
 The full documentation can be found at https://url-matcher.readthedocs.io/
 
-License is BSD 3-clause.
+License is Apache 2.0.
 
 * Documentation: https://url-matcher.readthedocs.io/
 * Source code: https://github.com/zytedata/url-matcher

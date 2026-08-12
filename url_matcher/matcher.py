@@ -150,9 +150,25 @@ class URLMatcher:
         return self.patterns.get(identifier)
 
     def match(self, url: str, *, include_universal: bool = True) -> Any | None:
+        """Return the identifier of the rule that matches *url*, or ``None`` if
+        no rule matches it.
+
+        When several rules match, the one that wins according to the
+        :ref:`conflict resolution criteria <conflict-resolution>` is returned.
+
+        If *include_universal* is false, rules with a universal include pattern
+        are ignored.
+        """
         return next(self.match_all(url, include_universal=include_universal), None)
 
     def match_all(self, url: str, *, include_universal: bool = True) -> Iterator[Any]:
+        """Yield the identifier of every rule that matches *url*, best match
+        first according to the
+        :ref:`conflict resolution criteria <conflict-resolution>`.
+
+        If *include_universal* is false, rules with a universal include pattern
+        are ignored.
+        """
         domain = get_domain(url)
         matchers: Iterable[PatternsMatcher] = self.matchers_by_domain.get(domain) or []
         if include_universal:
@@ -162,6 +178,10 @@ class URLMatcher:
                 yield matcher.identifier
 
     def match_universal(self) -> Iterator[Any]:
+        """Yield the identifier of every rule with a universal include pattern,
+        best match first according to the
+        :ref:`conflict resolution criteria <conflict-resolution>`.
+        """
         return (m.identifier for m in self.matchers_universal)
 
     def _sort_domain(self, domain: str) -> None:

@@ -25,4 +25,12 @@ def get_domain(url: str) -> str:
 
 
 def is_absolute(url: str) -> bool:
+    """
+    Return whether or not *url* is an absolute URL
+
+    >>> is_absolute("http://example.com/path")
+    True
+    >>> is_absolute("/path")
+    False
+    """
     return bool(urlparse(url).netloc)

@@ -38,11 +38,12 @@ assert not matcher.match(url)
 
 # Adding a pattern without domain fails
 
+rejected = False
 try:
     matcher.add_or_update("won't work", Patterns(["/path"]))
-    raise AssertionError
 except IncludePatternsWithoutDomainError:
-    ...
+    rejected = True
+assert rejected
 
 # But the empty pattern works. It matches anything
 

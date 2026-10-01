@@ -39,11 +39,7 @@ release = __version__.__version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "sphinx.ext.autodoc",
-    "sphinx.ext.intersphinx",
-    "sphinx.ext.ifconfig",
-    "sphinx.ext.viewcode",
-    "sphinx.ext.githubpages",
+    "sphinx_scrapy",
     "sphinx.ext.autosummary",
 ]
 
@@ -185,14 +181,6 @@ epub_exclude_files = ["search.html"]
 
 
 # -- Extension configuration -------------------------------------------------
-
-# -- Options for intersphinx extension ---------------------------------------
-intersphinx_mapping = {
-    "python": (
-        "https://docs.python.org/3",
-        None,
-    )
-}
 
 autodoc_default_options = {
     "special-members": "__init__,__call__",

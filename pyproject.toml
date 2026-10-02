@@ -47,6 +47,9 @@ include = [
     "/tox.ini",
 ]
 
+[tool.sphinx-scrapy]
+python-version = "3.14"  # Keep in sync with .github/workflows/test.yml
+
 [tool.bumpversion]
 current_version = "0.6.0"
 commit = true

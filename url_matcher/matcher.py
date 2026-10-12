@@ -186,17 +186,15 @@ class URLMatcher:
         self.matchers_universal.sort(key=sort_key, reverse=True)
 
     def _del_matcher(self, domain: str, identifier: Any) -> None:
-        matchers = self.matchers_by_domain[domain]
-        for idx in range(len(matchers)):
-            if matchers[idx].identifier == identifier:
-                del matchers[idx]
-                break
-        if not matchers:
+        matchers = [matcher for matcher in self.matchers_by_domain[domain] if matcher.identifier != identifier]
+        if matchers:
+            self.matchers_by_domain[domain] = matchers
+        else:
             del self.matchers_by_domain[domain]
-        for idx in range(len(self.matchers_universal)):
-            if self.matchers_universal[idx].identifier == identifier:
-                del self.matchers_universal[idx]
-                break
+        if domain == "":
+            self.matchers_universal = [
+                matcher for matcher in self.matchers_universal if matcher.identifier != identifier
+            ]
 
     def _add_matcher(self, domain: str, matcher: PatternsMatcher) -> None:
         # FIXME: This can be made much more efficient if we insert the data directly in order instead of resorting.

@@ -110,6 +110,7 @@ def test_matcher_add_remove_get():
     assert matcher.get(3) is None
 
     matcher.remove(1)
+    matcher.remove("never added")
     assert matcher.match("http://example.com/products") is None
     assert matcher.get(1) is None
     assert len(matcher.matchers_by_domain) == 0

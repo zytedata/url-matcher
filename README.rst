@@ -56,19 +56,22 @@ License is Apache 2.0.
 Developing
 **********
 
-Setup your local Python environment via:
+We use tox_ to run tests, type checks and linters:
 
-1. ``pip install -r requirements-dev.txt``
-2. ``pre-commit install``
+* ``tox`` runs the tests on every supported Python version, the type checks
+  (mypy) and the documentation build.
+* ``tox -e py`` runs the tests on your current Python version.
+* ``tox -e pre-commit`` runs the linters and formatters configured in
+  ``.pre-commit-config.yaml``.
 
-Now everytime you perform a ``git commit``, these tools will run against the staged files:
+To also run the linters and formatters against the staged files on every
+``git commit``, install pre-commit_ and its git hook::
 
-* ``black``
-* ``isort``
-* ``flake8``
-* ``mypy``
+    pip install pre-commit
+    pre-commit install
 
-You can also directly invoke ``pre-commit run --all-files`` to run them without performing a commit.
+.. _pre-commit: https://pre-commit.com
+.. _tox: https://tox.wiki
 
 
 Using sphinx-autobuild
